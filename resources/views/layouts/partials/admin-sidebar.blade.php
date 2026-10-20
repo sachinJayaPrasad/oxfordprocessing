@@ -18,6 +18,7 @@
                 'dashboard' => ['label' => 'Dashboard', 'icon' => 'grid_view', 'route' => 'admin.dashboard'],
                 'enquiries' => ['label' => 'Enquiries', 'icon' => 'folder_shared', 'route' => 'admin.enquiries'],
                 'services' => ['label' => 'Services', 'icon' => 'inventory_2', 'route' => 'admin.services'],
+                'testimonials' => ['label' => 'Testimonials', 'icon' => 'reviews', 'route' => 'admin.testimonials'],
             ] as $page => $item)
                 <a href="{{ route($item['route']) }}"
                    @if ($activePage === $page) aria-current="page" @endif

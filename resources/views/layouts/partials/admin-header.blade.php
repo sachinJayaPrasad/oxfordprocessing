@@ -6,5 +6,6 @@
         <a href="{{ route('admin.dashboard') }}">Dashboard</a>
         <a href="{{ route('admin.enquiries') }}">Enquiries</a>
         <a href="{{ route('admin.services') }}">Services</a>
+        <a href="{{ route('admin.testimonials') }}">Testimonials</a>
     </nav>
 </header>

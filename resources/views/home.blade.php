@@ -41,7 +41,10 @@
                                     <span class="material-symbols-outlined text-[18px] text-secondary-container">arrow_forward</span>
                                 </a>
                                 <a class="inline-flex items-center justify-center gap-space-xs px-space-lg py-3 rounded-lg bg-surface-container-lowest text-secondary font-label-md text-label-md shadow-sm hover:bg-surface-container transition-all" href="https://api.whatsapp.com/send?phone=919292797682" rel="noopener" target="_blank">
-                                    <span class="material-symbols-outlined text-[18px]">support_agent</span>
+                                    <svg aria-hidden="true" class="h-[18px] w-[18px] shrink-0" data-whatsapp-icon viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M20.52 3.48A11.8 11.8 0 0 0 12.12 0C5.58 0 .25 5.33.25 11.87c0 2.09.55 4.13 1.6 5.93L.15 24l6.36-1.67a11.82 11.82 0 0 0 5.61 1.42h.01C18.67 23.75 24 18.42 24 11.88c0-3.17-1.24-6.15-3.48-8.4Z" fill="currentColor" transform="translate(0 .1) scale(.99)" />
+                                        <path d="M8.1 6.7c-.3-.67-.61-.68-.9-.69h-.76c-.27 0-.7.1-1.06.5-.36.4-1.4 1.37-1.4 3.35s1.44 3.88 1.64 4.15c.2.26 2.78 4.46 6.87 6.08 3.4 1.34 4.1 1.08 4.84 1.01.74-.07 2.39-.97 2.72-1.9.34-.93.34-1.73.24-1.9-.1-.16-.36-.26-.76-.46-.4-.2-2.39-1.18-2.75-1.31-.37-.13-.63-.2-.9.2-.26.4-1.03 1.3-1.26 1.57-.23.27-.46.3-.86.1-.4-.2-1.7-.63-3.25-2.01-1.2-1.07-2.02-2.4-2.25-2.8-.23-.4-.03-.62.17-.82.18-.18.4-.47.6-.7.2-.24.26-.4.4-.67.13-.27.06-.5-.04-.7-.1-.2-.88-2.2-1.23-3Z" fill="#25D366" transform="translate(3.5 1.8) scale(.72)" />
+                                    </svg>
                                     <span>Talk to Our Team</span>
                                 </a>
                             </div>
@@ -170,125 +173,6 @@
                             <p class="text-on-surface-variant">Service categories will appear here soon.</p>
                         @endforelse
                     </div>
-                    {{-- Legacy static cards retained temporarily while the dynamic catalogue is used.
-                        <!-- Category 1: Overseas Registration & Licensing (Featured, spans 2 cols on lg) -->
-                        <div class="lg:col-span-2 group relative p-space-xl rounded-xl bg-surface shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden">
-                            <div class="absolute top-0 left-0 right-0 h-1 bg-secondary opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                            <div>
-                                <div class="flex items-center justify-between mb-space-md">
-                                    <div class="w-14 h-14 rounded-xl bg-surface-container-high flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
-                                        <span class="material-symbols-outlined text-[32px]">license</span>
-                                    </div>
-                                    --}}
-                                    <span class="px-space-md py-1 rounded-full bg-surface-container-highest text-primary font-label-sm text-label-sm font-semibold">
-                                        11 Structured Services
-                                    </span>
-                                </div>
-                                <h3 class="font-headline-md text-headline-md text-primary font-bold mb-space-xs">Overseas Registration & Licensing</h3>
-                                <p class="font-body-md text-body-md text-on-surface-variant max-w-xl mb-space-lg">
-                                    Structured assistance for medical, nursing, and professional bodies abroad. Comprehensive handling from application verification through to decision letter follow-ups.
-                                </p>
-                                <div class="flex flex-wrap gap-2 mb-space-lg">
-                                    <span class="px-2.5 py-1 rounded bg-surface-container-low font-body-sm text-[12px] text-on-surface font-medium">NMBI Decision Letter</span>
-                                    <span class="px-2.5 py-1 rounded bg-surface-container-low font-body-sm text-[12px] text-on-surface font-medium">AHPRA Verification</span>
-                                    <span class="px-2.5 py-1 rounded bg-surface-container-low font-body-sm text-[12px] text-on-surface font-medium">Middle East Prometric</span>
-                                    <span class="px-2.5 py-1 rounded bg-surface-container-low font-body-sm text-[12px] text-on-surface font-medium">NCLEX Board Filings</span>
-                                </div>
-                            </div>
-                            <a class="inline-flex items-center gap-space-xs font-label-md text-label-md text-primary font-semibold group-hover:text-secondary transition-colors" data-path="services-overseas-licensing" href="{{ route('services') }}#overseas-registration">
-                                <span>View Services (11)</span>
-                                <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                            </a>
-                        </div>
-                        <!-- Category 2: Documentation -->
-                        <div class="group relative p-space-xl rounded-xl bg-surface shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden">
-                            <div class="absolute top-0 left-0 right-0 h-1 bg-secondary opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                            <div>
-                                <div class="flex items-center justify-between mb-space-md">
-                                    <div class="w-14 h-14 rounded-xl bg-surface-container-high flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
-                                        <span class="material-symbols-outlined text-[32px]">folder_special</span>
-                                    </div>
-                                    <span class="px-space-md py-1 rounded-full bg-surface-container-highest text-primary font-label-sm text-label-sm font-semibold">
-                                        6 Services
-                                    </span>
-                                </div>
-                                <h3 class="font-headline-md text-headline-md text-primary font-bold mb-space-xs">Documentation & Attestation</h3>
-                                <p class="font-body-md text-body-md text-on-surface-variant mb-space-lg">
-                                    Fastidious support for state certificates, passports, PSC, and identity verification with zero compromise on legal formatting.
-                                </p>
-                            </div>
-                            <a class="inline-flex items-center gap-space-xs font-label-md text-label-md text-primary font-semibold group-hover:text-secondary transition-colors" data-path="services-documentation" href="{{ route('services') }}#documentation">
-                                <span>View Services (6)</span>
-                                <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                            </a>
-                        </div>
-                        <!-- Category 3: Education & University -->
-                        <div class="group relative p-space-xl rounded-xl bg-surface shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden">
-                            <div class="absolute top-0 left-0 right-0 h-1 bg-secondary opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                            <div>
-                                <div class="flex items-center justify-between mb-space-md">
-                                    <div class="w-14 h-14 rounded-xl bg-surface-container-high flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
-                                        <span class="material-symbols-outlined text-[32px]">school</span>
-                                    </div>
-                                    <span class="px-space-md py-1 rounded-full bg-surface-container-highest text-primary font-label-sm text-label-sm font-semibold">
-                                        4 Services
-                                    </span>
-                                </div>
-                                <h3 class="font-headline-md text-headline-md text-primary font-bold mb-space-xs">Education & University</h3>
-                                <p class="font-body-md text-body-md text-on-surface-variant mb-space-lg">
-                                    Guiding school and university admissions, college allotments, and academic filings with institution-specific precision.
-                                </p>
-                            </div>
-                            <a class="inline-flex items-center gap-space-xs font-label-md text-label-md text-primary font-semibold group-hover:text-secondary transition-colors" data-path="services-education" href="{{ route('services') }}#education">
-                                <span>View Services (4)</span>
-                                <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                            </a>
-                        </div>
-                        <!-- Category 4: Career Support -->
-                        <div class="group relative p-space-xl rounded-xl bg-surface shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden">
-                            <div class="absolute top-0 left-0 right-0 h-1 bg-secondary opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                            <div>
-                                <div class="flex items-center justify-between mb-space-md">
-                                    <div class="w-14 h-14 rounded-xl bg-surface-container-high flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
-                                        <span class="material-symbols-outlined text-[32px]">badge</span>
-                                    </div>
-                                    <span class="px-space-md py-1 rounded-full bg-surface-container-highest text-primary font-label-sm text-label-sm font-semibold">
-                                        4 Services
-                                    </span>
-                                </div>
-                                <h3 class="font-headline-md text-headline-md text-primary font-bold mb-space-xs">Career Support & Placement</h3>
-                                <p class="font-body-md text-body-md text-on-surface-variant mb-space-lg">
-                                    ATS-compliant resumes, bespoke cover letters, and comprehensive interview preparation customized to international hiring standards.
-                                </p>
-                            </div>
-                            <a class="inline-flex items-center gap-space-xs font-label-md text-label-md text-primary font-semibold group-hover:text-secondary transition-colors" data-path="services-career" href="{{ route('services') }}#career-support">
-                                <span>View Services (4)</span>
-                                <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                            </a>
-                        </div>
-                        <!-- Category 5: Exam & Language -->
-                        <div class="group relative p-space-xl rounded-xl bg-surface shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden">
-                            <div class="absolute top-0 left-0 right-0 h-1 bg-secondary opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                            <div>
-                                <div class="flex items-center justify-between mb-space-md">
-                                    <div class="w-14 h-14 rounded-xl bg-surface-container-high flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
-                                        <span class="material-symbols-outlined text-[32px]">menu_book</span>
-                                    </div>
-                                    <span class="px-space-md py-1 rounded-full bg-surface-container-highest text-primary font-label-sm text-label-sm font-semibold">
-                                        5 Services
-                                    </span>
-                                </div>
-                                <h3 class="font-headline-md text-headline-md text-primary font-bold mb-space-xs">Exam & Language Preparation</h3>
-                                <p class="font-body-md text-body-md text-on-surface-variant mb-space-lg">
-                                    Exam slot booking, registration support, and structured online preparation guidance for IELTS, OET, Prometric, and CBT.
-                                </p>
-                            </div>
-                            <a class="inline-flex items-center gap-space-xs font-label-md text-label-md text-primary font-semibold group-hover:text-secondary transition-colors" data-path="services-exam-language" href="{{ route('services') }}#exam-language">
-                                <span>View Services (5)</span>
-                                <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </section>
             <!-- SECTION 3: WHY CHOOSE OXFORD PROCESSING (SERVICE PRINCIPLES) -->
@@ -303,7 +187,7 @@
                         </p>
                     </div>
                     <!-- Principles Grid: 5 Pillars -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+                    <div class="grid auto-rows-fr grid-cols-1 items-stretch gap-gutter md:grid-cols-2 lg:grid-cols-3">
                         <!-- Principle 1 -->
                         <div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-shadow">
                             <div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary mb-space-md">
@@ -441,9 +325,9 @@
                         </div>
                     </div>
                     <!-- Representative 6-Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+                    <div class="grid auto-rows-fr grid-cols-1 items-stretch gap-gutter md:grid-cols-2 lg:grid-cols-3">
                         <!-- Rep Service 1: NMBI DL -->
-                        <div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                        <div class="h-full min-h-[18rem] p-space-lg rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
                             <div>
                                 <div class="flex items-center justify-between mb-space-sm">
                                     <span class="px-space-sm py-0.5 rounded bg-surface-container-highest text-primary font-label-sm text-[11px] font-semibold">Overseas Licensing</span>
@@ -460,7 +344,7 @@
                             </a>
                         </div>
                         <!-- Rep Service 2: DataFlow -->
-                        <div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                        <div class="h-full min-h-[18rem] p-space-lg rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
                             <div>
                                 <div class="flex items-center justify-between mb-space-sm">
                                     <span class="px-space-sm py-0.5 rounded bg-surface-container-highest text-primary font-label-sm text-[11px] font-semibold">Overseas Licensing</span>
@@ -477,7 +361,7 @@
                             </a>
                         </div>
                         <!-- Rep Service 3: ATS CV & Cover Letter -->
-                        <div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                        <div class="h-full min-h-[18rem] p-space-lg rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
                             <div>
                                 <div class="flex items-center justify-between mb-space-sm">
                                     <span class="px-space-sm py-0.5 rounded bg-surface-container-highest text-primary font-label-sm text-[11px] font-semibold">Career Support</span>
@@ -494,7 +378,7 @@
                             </a>
                         </div>
                         <!-- Rep Service 4: OET / IELTS Booking -->
-                        <div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                        <div class="h-full min-h-[18rem] p-space-lg rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
                             <div>
                                 <div class="flex items-center justify-between mb-space-sm">
                                     <span class="px-space-sm py-0.5 rounded bg-surface-container-highest text-primary font-label-sm text-[11px] font-semibold">Exam & Language</span>
@@ -511,7 +395,7 @@
                             </a>
                         </div>
                         <!-- Rep Service 5: Passport Applications -->
-                        <div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                        <div class="h-full min-h-[18rem] p-space-lg rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
                             <div>
                                 <div class="flex items-center justify-between mb-space-sm">
                                     <span class="px-space-sm py-0.5 rounded bg-surface-container-highest text-primary font-label-sm text-[11px] font-semibold">Documentation</span>
@@ -528,7 +412,7 @@
                             </a>
                         </div>
                         <!-- Rep Service 6: University Application Support -->
-                        <div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                        <div class="h-full min-h-[18rem] p-space-lg rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
                             <div>
                                 <div class="flex items-center justify-between mb-space-sm">
                                     <span class="px-space-sm py-0.5 rounded bg-surface-container-highest text-primary font-label-sm text-[11px] font-semibold">Education</span>
@@ -547,6 +431,130 @@
                     </div>
                 </div>
             </section>
+            @if ($testimonials->isNotEmpty())
+                <section class="w-full bg-surface-container-low py-margin-lg" aria-labelledby="testimonials-heading">
+                    <div class="mx-auto max-w-7xl px-margin">
+                        <div class="mx-auto mb-space-xl max-w-3xl text-center">
+                            <span class="font-label-sm font-bold uppercase tracking-widest text-secondary">Client experiences</span>
+                            <h2 id="testimonials-heading" class="mt-2 font-headline-xl text-headline-xl font-bold text-primary">What our clients say</h2>
+                            <p class="mt-3 text-body-md text-on-surface-variant">Feedback shared by clients about their experience with Oxford Processing.</p>
+                        </div>
+                        @php($testimonialGroups = $testimonials->chunk(3))
+                        <div id="testimonial-carousel" class="relative overflow-hidden touch-pan-y">
+                            <div class="flex transition-transform duration-[1200ms] ease-in-out" data-testimonial-track>
+                                @foreach ($testimonialGroups as $groupIndex => $testimonialGroup)
+                                    <div class="grid w-full flex-none grid-cols-1 items-stretch gap-gutter md:grid-cols-2 lg:grid-cols-3"
+                                        data-testimonial-slide
+                                        aria-hidden="{{ $groupIndex === 0 ? 'false' : 'true' }}">
+                                        @foreach ($testimonialGroup as $testimonial)
+                                            <article class="flex h-full flex-col rounded-xl bg-surface-container-lowest p-space-lg shadow-sm">
+                                                <div class="flex gap-1 text-amber-500" aria-label="{{ $testimonial->rating }} out of 5 stars">
+                                                    @for ($star = 1; $star <= 5; $star++)
+                                                        <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' {{ $star <= $testimonial->rating ? 1 : 0 }}, 'wght' 600" aria-hidden="true">star</span>
+                                                    @endfor
+                                                </div>
+                                                <blockquote class="mt-4 flex-1 whitespace-pre-line leading-relaxed text-on-surface-variant">“{{ $testimonial->content }}”</blockquote>
+                                                <div class="mt-6 border-t border-surface-container pt-4">
+                                                    <p class="font-semibold text-primary">{{ $testimonial->customer_name }}</p>
+                                                    @if ($testimonial->designation)
+                                                        <p class="mt-1 text-sm text-on-surface-variant">{{ $testimonial->designation }}</p>
+                                                    @endif
+                                                </div>
+                                            </article>
+                                        @endforeach
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @if ($testimonialGroups->count() > 1)
+                            <div class="mt-6 flex items-center justify-center gap-2" role="group" aria-label="Choose testimonial group">
+                                @foreach (range(0, 2) as $dotIndex)
+                                    <button type="button"
+                                        class="h-2.5 w-2.5 rounded-full bg-primary/30 transition-all hover:bg-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                                        data-testimonial-dot="{{ $dotIndex }}"
+                                        aria-label="Show testimonial group {{ $dotIndex + 1 }}"
+                                        aria-pressed="{{ $dotIndex === 0 ? 'true' : 'false' }}">
+                                    </button>
+                                @endforeach
+                            </div>
+                            <script>
+                                (() => {
+                                    const carousel = document.getElementById('testimonial-carousel');
+                                    const track = carousel.querySelector('[data-testimonial-track]');
+                                    const slides = Array.from(carousel.querySelectorAll('[data-testimonial-slide]'));
+                                    const dots = Array.from(document.querySelectorAll('[data-testimonial-dot]'));
+                                    let activeSlide = 0;
+                                    let autoAdvance;
+                                    let pointerStartX = null;
+
+                                    const dotSlideIndexes = dots.map((_, dotIndex) => Math.round(
+                                        dotIndex * (slides.length - 1) / (dots.length - 1)
+                                    ));
+
+                                    const showSlide = (index) => {
+                                        activeSlide = (index + slides.length) % slides.length;
+                                        slides.forEach((slide, slideIndex) => {
+                                            const isActive = slideIndex === activeSlide;
+                                            slide.setAttribute('aria-hidden', String(!isActive));
+                                        });
+                                        track.style.transform = `translateX(-${activeSlide * 100 / slides.length}%)`;
+                                        const activeDot = dotSlideIndexes.reduce((nearest, slideIndex, dotIndex) =>
+                                            Math.abs(slideIndex - activeSlide) < Math.abs(dotSlideIndexes[nearest] - activeSlide)
+                                                ? dotIndex
+                                                : nearest, 0);
+                                        dots.forEach((dot, dotIndex) => {
+                                            const isActive = dotIndex === activeDot;
+                                            dot.setAttribute('aria-pressed', String(isActive));
+                                            dot.classList.toggle('w-6', isActive);
+                                            dot.classList.toggle('bg-primary', isActive);
+                                            dot.classList.toggle('bg-primary/30', !isActive);
+                                        });
+                                    };
+
+                                    const restartAutoAdvance = () => {
+                                        window.clearInterval(autoAdvance);
+                                        autoAdvance = window.setInterval(() => showSlide(activeSlide + 1), 6000);
+                                    };
+
+                                    dots.forEach((dot, dotIndex) => {
+                                        dot.addEventListener('click', () => {
+                                            showSlide(dotSlideIndexes[dotIndex]);
+                                            restartAutoAdvance();
+                                        });
+                                    });
+
+                                    carousel.addEventListener('pointerdown', (event) => {
+                                        pointerStartX = event.clientX;
+                                    });
+                                    carousel.addEventListener('pointerup', (event) => {
+                                        if (pointerStartX === null) return;
+
+                                        const swipeDistance = event.clientX - pointerStartX;
+                                        pointerStartX = null;
+
+                                        if (Math.abs(swipeDistance) > 40) {
+                                            showSlide(activeSlide + (swipeDistance < 0 ? 1 : -1));
+                                            restartAutoAdvance();
+                                        }
+                                    });
+                                    carousel.addEventListener('pointercancel', () => {
+                                        pointerStartX = null;
+                                    });
+                                    carousel.addEventListener('mouseenter', () => window.clearInterval(autoAdvance));
+                                    carousel.addEventListener('mouseleave', restartAutoAdvance);
+                                    carousel.addEventListener('focusin', () => window.clearInterval(autoAdvance));
+                                    carousel.addEventListener('focusout', (event) => {
+                                        if (!carousel.contains(event.relatedTarget)) restartAutoAdvance();
+                                    });
+
+                                    showSlide(0);
+                                    restartAutoAdvance();
+                                })();
+                            </script>
+                        @endif
+                    </div>
+                </section>
+            @endif
             <!-- SECTION 6: ABOUT OXFORD PROCESSING SECTION -->
             <section id="about-us" class="w-full py-margin-lg bg-surface-container-lowest relative overflow-hidden scroll-mt-32">
                 <div class="max-w-7xl mx-auto px-margin">
@@ -652,7 +660,10 @@
                             <!-- Buttons -->
                             <div class="lg:col-span-5 flex flex-col sm:flex-row lg:flex-col gap-space-md justify-center">
                                 <a class="inline-flex items-center justify-center gap-space-xs px-space-lg py-3.5 rounded-lg bg-[#25D366] text-white font-label-md text-label-md font-bold shadow-md hover:bg-[#20ba59] transition-all" href="https://api.whatsapp.com/send?phone=919292797682" rel="noopener" target="_blank">
-                                    <span class="material-symbols-outlined text-[20px]">chat</span>
+                                    <svg aria-hidden="true" class="h-5 w-5 shrink-0" data-whatsapp-icon viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M20.52 3.48A11.8 11.8 0 0 0 12.12 0C5.58 0 .25 5.33.25 11.87c0 2.09.55 4.13 1.6 5.93L.15 24l6.36-1.67a11.82 11.82 0 0 0 5.61 1.42h.01C18.67 23.75 24 18.42 24 11.88c0-3.17-1.24-6.15-3.48-8.4Z" fill="currentColor" transform="translate(0 .1) scale(.99)" />
+                                        <path d="M8.1 6.7c-.3-.67-.61-.68-.9-.69h-.76c-.27 0-.7.1-1.06.5-.36.4-1.4 1.37-1.4 3.35s1.44 3.88 1.64 4.15c.2.26 2.78 4.46 6.87 6.08 3.4 1.34 4.1 1.08 4.84 1.01.74-.07 2.39-.97 2.72-1.9.34-.93.34-1.73.24-1.9-.1-.16-.36-.26-.76-.46-.4-.2-2.39-1.18-2.75-1.31-.37-.13-.63-.2-.9.2-.26.4-1.03 1.3-1.26 1.57-.23.27-.46.3-.86.1-.4-.2-1.7-.63-3.25-2.01-1.2-1.07-2.02-2.4-2.25-2.8-.23-.4-.03-.62.17-.82.18-.18.4-.47.6-.7.2-.24.26-.4.4-.67.13-.27.06-.5-.04-.7-.1-.2-.88-2.2-1.23-3Z" fill="#25D366" transform="translate(3.5 1.8) scale(.72)" />
+                                    </svg>
                                     <span>Enquire on WhatsApp</span>
                                 </a>
                                 <a class="inline-flex items-center justify-center gap-space-xs px-space-lg py-3.5 rounded-lg bg-surface-container-lowest text-primary font-label-md text-label-md font-bold shadow-md hover:bg-surface-container transition-all" data-path="enquiry" href="{{ route('contact') }}#oxfordEnquiryForm">

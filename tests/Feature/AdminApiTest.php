@@ -6,8 +6,10 @@ use App\Mail\EnquiryStatusMail;
 use App\Models\Enquiry;
 use App\Models\Service;
 use App\Models\ServiceCategory;
+use App\Models\Testimonial;
 use App\Models\User;
 use Database\Seeders\AdminUserSeeder;
+use Database\Seeders\DemoTestimonialsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
@@ -69,6 +71,143 @@ class AdminApiTest extends TestCase
 
         $this->post('/admin/logout')->assertRedirect(route('admin.login'));
         $this->get('/admin')->assertRedirect(route('admin.login'));
+    }
+
+    public function test_admin_manages_testimonials_and_only_published_feedback_appears_on_homepage(): void
+    {
+        $admin = User::create([
+            'name' => 'Admin User',
+            'email' => 'admin@example.test',
+            'password' => Hash::make('password'),
+            'is_admin' => true,
+        ]);
+
+        $this->get('/admin/testimonials')->assertRedirect(route('admin.login'));
+
+        $this->actingAs($admin)
+            ->get('/admin/testimonials')
+            ->assertOk()
+            ->assertSee('Testimonials')
+            ->assertSee('Add testimonial');
+
+        $this->actingAs($admin)
+            ->post('/admin/testimonials', [
+                'customer_name' => 'Jordan Client',
+                'designation' => 'Registration support',
+                'content' => 'The team kept me informed throughout the process.',
+                'rating' => 5,
+            ])
+            ->assertRedirect(route('admin.testimonials'))
+            ->assertSessionHas('testimonial_saved', 'created');
+
+        $testimonial = Testimonial::where('customer_name', 'Jordan Client')->firstOrFail();
+        $this->assertTrue($testimonial->is_published);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('What our clients say')
+            ->assertSee('Jordan Client')
+            ->assertSee('Registration support')
+            ->assertSee('The team kept me informed throughout the process.');
+
+        $this->actingAs($admin)
+            ->get('/admin/testimonials?edit='.$testimonial->id)
+            ->assertOk()
+            ->assertSee('Edit testimonial')
+            ->assertSee('Jordan Client');
+
+        $this->actingAs($admin)
+            ->put("/admin/testimonials/{$testimonial->id}", [
+                'customer_name' => 'Jordan Client',
+                'designation' => 'Updated context',
+                'content' => 'Updated testimonial content.',
+                'rating' => 4,
+            ])
+            ->assertRedirect(route('admin.testimonials'))
+            ->assertSessionHas('testimonial_saved', 'updated');
+
+        $this->assertDatabaseHas('testimonials', [
+            'id' => $testimonial->id,
+            'content' => 'Updated testimonial content.',
+            'is_published' => false,
+        ]);
+        $this->get('/')
+            ->assertOk()
+            ->assertDontSee('What our clients say')
+            ->assertDontSee('Jordan Client');
+
+        $this->actingAs($admin)
+            ->put("/admin/testimonials/{$testimonial->id}", [
+                'customer_name' => 'Jordan Client',
+                'designation' => 'Updated context',
+                'content' => 'Updated testimonial content.',
+                'rating' => 4,
+                'is_published' => '1',
+            ])
+            ->assertRedirect(route('admin.testimonials'));
+        $this->get('/')->assertOk()->assertSee('Updated testimonial content.');
+
+        $this->actingAs($admin)
+            ->delete("/admin/testimonials/{$testimonial->id}")
+            ->assertRedirect(route('admin.testimonials'))
+            ->assertSessionHas('testimonial_saved', 'deleted');
+        $this->assertDatabaseMissing('testimonials', ['id' => $testimonial->id]);
+    }
+
+    public function test_demo_testimonials_are_created_unpublished_and_seeder_is_repeatable(): void
+    {
+        $this->seed(DemoTestimonialsSeeder::class);
+
+        $this->assertSame(20, Testimonial::count());
+        $this->assertSame(0, Testimonial::where('is_published', true)->count());
+        $this->assertSame(20, Testimonial::where('designation', 'Demo content — replace before publishing')->count());
+        $this->get('/')->assertOk()->assertDontSee('What our clients say');
+
+        $this->seed(DemoTestimonialsSeeder::class);
+        $this->assertSame(20, Testimonial::count());
+    }
+
+    public function test_homepage_displays_all_published_testimonials(): void
+    {
+        Testimonial::factory()
+            ->count(8)
+            ->create(['is_published' => true]);
+
+        $response = $this->get('/')->assertOk();
+
+        foreach (Testimonial::query()->pluck('customer_name') as $customerName) {
+            $response->assertSee($customerName);
+        }
+
+        $response->assertSee('data-testimonial-dot="0"', false)
+            ->assertSee('data-testimonial-dot="1"', false)
+            ->assertSee('data-testimonial-dot="2"', false)
+            ->assertSee('duration-[1200ms]', false)
+            ->assertSee('data-testimonial-track', false)
+            ->assertSee('translateX(-${activeSlide * 100 / slides.length}%)', false)
+            ->assertSee('setInterval(() => showSlide(activeSlide + 1), 6000)', false)
+            ->assertSee('pointerup', false)
+            ->assertSee("'FILL' 1", false);
+        $this->assertSame(3, substr_count($response->getContent(), 'data-testimonial-dot='));
+    }
+
+    public function test_footer_navigation_uses_working_links_without_legal_policy_items(): void
+    {
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('href="'.route('home').'"', false)
+            ->assertSee('href="'.route('home').'#about-us"', false)
+            ->assertSee('href="'.route('services').'"', false)
+            ->assertSee('href="'.route('services', ['search' => 'Registration']).'"', false)
+            ->assertSee('href="'.route('services', ['search' => 'Documentation']).'"', false)
+            ->assertSee('href="'.route('services', ['search' => 'Education']).'"', false)
+            ->assertSee('href="'.route('services', ['search' => 'Career']).'"', false)
+            ->assertSee('href="'.route('services', ['search' => 'Exam']).'"', false)
+            ->assertSee('href="'.route('contact').'"', false)
+            ->assertDontSee('Privacy Policy')
+            ->assertDontSee('Terms &amp; Disclaimer')
+            ->assertDontSee('Terms & Disclaimer')
+            ->assertDontSee('Disclaimer: Oxford Processing');
     }
 
     public function test_admin_enquiries_table_is_paginated_and_page_size_is_adjustable(): void
@@ -134,6 +273,7 @@ class AdminApiTest extends TestCase
             ->assertOk()
             ->assertDontSee('Anju Susan Thomas')
             ->assertSee('Sample Service')
+            ->assertSee('data-whatsapp-icon', false)
             ->assertSee('name="name"', false);
 
         $this->post('/contact-us/enquiries', [
@@ -374,7 +514,8 @@ class AdminApiTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertSee('Clinical Services')
-            ->assertSee('1 service');
+            ->assertSee('1 service')
+            ->assertDontSee('11 Structured Services');
         $this->get('/services?category=Clinical%20Services')
             ->assertOk()
             ->assertSee('Clinical Registration');

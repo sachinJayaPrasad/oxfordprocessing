@@ -32,7 +32,10 @@
                     </div>
                     <div class="flex flex-wrap items-center gap-space-md pt-space-sm">
                         <a class="inline-flex items-center justify-center gap-space-xs bg-secondary hover:bg-tertiary-container text-on-primary font-label-md text-label-md px-space-lg py-3 rounded-lg shadow-md transition-all" href="https://api.whatsapp.com/send?phone=919292797682&amp;text={{ rawurlencode('Hello Oxford Processing, I am inquiring about ' . $service['title'] . '.') }}" rel="noopener" target="_blank">
-                            <span class="material-symbols-outlined text-[20px] text-secondary-fixed">chat</span>
+                            <svg aria-hidden="true" class="h-5 w-5 shrink-0" data-whatsapp-icon viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20.52 3.48A11.8 11.8 0 0 0 12.12 0C5.58 0 .25 5.33.25 11.87c0 2.09.55 4.13 1.6 5.93L.15 24l6.36-1.67a11.82 11.82 0 0 0 5.61 1.42h.01C18.67 23.75 24 18.42 24 11.88c0-3.17-1.24-6.15-3.48-8.4Z" fill="currentColor" transform="translate(0 .1) scale(.99)" />
+                                <path d="M8.1 6.7c-.3-.67-.61-.68-.9-.69h-.76c-.27 0-.7.1-1.06.5-.36.4-1.4 1.37-1.4 3.35s1.44 3.88 1.64 4.15c.2.26 2.78 4.46 6.87 6.08 3.4 1.34 4.1 1.08 4.84 1.01.74-.07 2.39-.97 2.72-1.9.34-.93.34-1.73.24-1.9-.1-.16-.36-.26-.76-.46-.4-.2-2.39-1.18-2.75-1.31-.37-.13-.63-.2-.9.2-.26.4-1.03 1.3-1.26 1.57-.23.27-.46.3-.86.1-.4-.2-1.7-.63-3.25-2.01-1.2-1.07-2.02-2.4-2.25-2.8-.23-.4-.03-.62.17-.82.18-.18.4-.47.6-.7.2-.24.26-.4.4-.67.13-.27.06-.5-.04-.7-.1-.2-.88-2.2-1.23-3Z" fill="#25D366" transform="translate(3.5 1.8) scale(.72)" />
+                            </svg>
                             <span>Enquire on WhatsApp</span>
                         </a>
                         <a class="inline-flex items-center justify-center gap-space-xs bg-surface-container-lowest text-primary hover:bg-surface-container font-label-md text-label-md px-space-lg py-3 rounded-lg shadow-sm transition-all" href="{{ route('contact') }}?service={{ $slug }}#oxfordEnquiryForm">
