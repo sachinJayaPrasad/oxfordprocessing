@@ -34,6 +34,7 @@
         ::-webkit-scrollbar {
             display: none;
         }
+
     </style>
     <script src="https://cdn.tailwindcss.com"></script>
     <script id="tailwind-config">
@@ -194,9 +195,9 @@
 </head>
 <body class="bg-background font-body-md text-on-surface antialiased">
     @include('layouts.partials.admin-sidebar', ['activePage' => trim($__env->yieldContent('activePage'))])
-    <div class="pl-72">
+    <div class="min-w-0 lg:pl-72">
         @include('layouts.partials.admin-header')
-        <main class="w-full pt-16 bg-background px-8 pb-12">
+        <main class="w-full min-w-0 pt-20 lg:pt-16 bg-background px-4 lg:px-8 pb-12">
             @yield('content')
         </main>
     </div>

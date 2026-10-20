@@ -143,7 +143,18 @@
                                 </span>
                             </div>
                         </div>
-                        <form class="flex flex-col gap-space-md" id="oxfordEnquiryForm" onsubmit="event.preventDefault(); handleFormSubmit();">
+                        <form class="flex flex-col gap-space-md" id="oxfordEnquiryForm" method="POST" action="{{ route('contact.enquiries.store') }}">
+                            @csrf
+                            @if ($errors->any())
+                                <div class="rounded-lg bg-red-100 p-space-md text-red-900" role="alert">
+                                    <p class="font-semibold">Please review the highlighted form details.</p>
+                                    <ul class="mt-1 list-inside list-disc">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                             <!-- Row 1: Full Name & Phone Number -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
                                 <div class="flex flex-col gap-space-xs">
@@ -152,8 +163,7 @@
                                         <span class="text-outline text-label-sm font-label-sm">As in Passport</span>
                                     </label>
                                     <div class="relative">
-                                        <input class="w-full h-11 px-space-md bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded shadow-sm focus:outline-none focus:bg-surface focus:ring-2 focus:ring-primary-container/20 transition-all placeholder:text-outline" id="fullName" name="fullName" placeholder="e.g. Anju Susan Thomas" required="" type="text" value="Anju Susan Thomas" />
-                                        <span class="material-symbols-outlined absolute right-3 top-3 text-[18px] text-emerald-700">check_circle</span>
+                                        <input class="w-full h-11 px-space-md bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded shadow-sm focus:outline-none focus:bg-surface focus:ring-2 focus:ring-primary-container/20 transition-all placeholder:text-outline" id="fullName" name="name" placeholder="Enter your full name" required type="text" value="{{ old('name') }}" />
                                     </div>
                                     <span class="text-label-sm font-label-sm text-outline">Verified legal identity format accepted</span>
                                 </div>
@@ -163,8 +173,7 @@
                                         <span class="text-secondary text-label-sm font-label-sm font-medium">WhatsApp Enabled</span>
                                     </label>
                                     <div class="relative">
-                                        <input class="w-full h-11 px-space-md bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded shadow-sm focus:outline-none focus:bg-surface focus:ring-2 focus:ring-primary-container/20 transition-all placeholder:text-outline" id="phoneNumber" name="phoneNumber" placeholder="+91 98765 43210" required="" type="tel" value="+91 98471 20984" />
-                                        <span class="material-symbols-outlined absolute right-3 top-3 text-[18px] text-emerald-700">check_circle</span>
+                                        <input class="w-full h-11 px-space-md bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded shadow-sm focus:outline-none focus:bg-surface focus:ring-2 focus:ring-primary-container/20 transition-all placeholder:text-outline" id="phoneNumber" name="phone" placeholder="+91 98765 43210" required type="tel" value="{{ old('phone') }}" />
                                     </div>
                                     <span class="text-label-sm font-label-sm text-outline">Primary number for dispatch and registration status alerts</span>
                                 </div>
@@ -176,7 +185,7 @@
                                     <span class="text-outline text-label-sm font-label-sm">Optional / Recommended for Written Audits</span>
                                 </label>
                                 <div class="relative">
-                                    <input class="w-full h-11 px-space-md bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded shadow-sm focus:outline-none focus:bg-surface focus:ring-2 focus:ring-primary-container/20 transition-all placeholder:text-outline" id="emailAddress" name="emailAddress" placeholder="anju.thomas@example.com" type="email" value="anju.susan.t@gmail.com" />
+                                    <input class="w-full h-11 px-space-md bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded shadow-sm focus:outline-none focus:bg-surface focus:ring-2 focus:ring-primary-container/20 transition-all placeholder:text-outline" id="emailAddress" name="email" placeholder="you@example.com" type="email" value="{{ old('email') }}" />
                                     <span class="material-symbols-outlined absolute right-3 top-3 text-[18px] text-outline-variant">alternate_email</span>
                                 </div>
                             </div>
@@ -188,13 +197,11 @@
                                         Service Domain <span class="text-error font-bold">*</span>
                                     </label>
                                     <div class="relative">
-                                        <select class="w-full h-11 px-space-md pr-10 bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded shadow-sm focus:outline-none focus:bg-surface focus:ring-2 focus:ring-primary-container/20 transition-all appearance-none cursor-pointer" id="serviceCategory" name="serviceCategory" onchange="updateServiceOptions(this.value)" required="">
-                                            <option disabled="" value="">Select Core Division</option>
-                                            <option selected="" value="licensing">Overseas Registration & Licensing</option>
-                                            <option value="documentation">Documentation & Attestation</option>
-                                            <option value="education">Education & University Migration</option>
-                                            <option value="career">Career Support & Placement</option>
-                                            <option value="exam">Exam & Language Preparation</option>
+                                        <select class="w-full h-11 px-space-md pr-10 bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded shadow-sm focus:outline-none focus:bg-surface focus:ring-2 focus:ring-primary-container/20 transition-all appearance-none cursor-pointer" id="serviceCategory" name="service_category" onchange="updateServiceOptions(this.value)" required>
+                                            <option value="">Select a service category</option>
+                                            @foreach ($categories as $category)
+                                                <option value="{{ $category }}" @selected(old('service_category', $selectedService?->category) === $category)>{{ $category }}</option>
+                                            @endforeach
                                         </select>
                                         <span class="material-symbols-outlined absolute right-3 top-3 text-[20px] text-outline pointer-events-none">expand_more</span>
                                     </div>
@@ -205,16 +212,11 @@
                                         Specific Service of Interest <span class="text-error font-bold">*</span>
                                     </label>
                                     <div class="relative">
-                                        <select class="w-full h-11 px-space-md pr-10 bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded shadow-sm focus:outline-none focus:bg-surface focus:ring-2 focus:ring-primary-container/20 transition-all appearance-none cursor-pointer" id="specificService" name="specificService" required="">
-                                            <option selected="" value="nmbi-dl">NMBI Decision Letter (Ireland Nursing)</option>
-                                            <option value="nmbi-reval">NMBI Re-evaluation & Extension</option>
-                                            <option value="nmbi-recog">NMBI Qualification Recognition</option>
-                                            <option value="nmbi-pin">NMBI Pin Registration Finalization</option>
-                                            <option value="nmbi-support">NMBI Complete Process Support</option>
-                                            <option value="dataflow">DataFlow Primary Source Verification</option>
-                                            <option value="wes">WES / ICAS / IQAS Credential Evaluation</option>
-                                            <option value="cGFNS">CGFNS Certification Program (USA)</option>
-                                            <option value="oet">OET Booking & Remedial Coaching</option>
+                                        <select class="w-full h-11 px-space-md pr-10 bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded shadow-sm focus:outline-none focus:bg-surface focus:ring-2 focus:ring-primary-container/20 transition-all appearance-none cursor-pointer" id="specificService" name="service_id" required>
+                                            <option value="">Select a service</option>
+                                            @foreach ($services as $service)
+                                                <option value="{{ $service->id }}" data-category="{{ $service->category }}" @selected((string) old('service_id', $selectedService?->id) === (string) $service->id)>{{ $service->title }}</option>
+                                            @endforeach
                                         </select>
                                         <span class="material-symbols-outlined absolute right-3 top-3 text-[20px] text-outline pointer-events-none">expand_more</span>
                                     </div>
@@ -226,11 +228,11 @@
                                     <span>Specific Questions or Processing Requirements <span class="text-error font-bold">*</span></span>
                                     <span class="text-outline text-label-sm font-label-sm">Min. 20 Characters</span>
                                 </label>
-                                <textarea class="w-full p-space-md bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded shadow-sm focus:outline-none focus:bg-surface focus:ring-2 focus:ring-primary-container/20 transition-all placeholder:text-outline resize-none" id="candidateMessage" name="candidateMessage" placeholder="State your current nursing or educational qualification, council of registration in India (e.g., KNMC), target country, and current documentation bottlenecks..." required="" rows="4">Completed BSc Nursing under Kerala Nurses and Midwives Council (KNMC). Looking to initiate NMBI Decision Letter application for Ireland with concurrent DataFlow verification guidance.</textarea>
+                                <textarea class="w-full p-space-md bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded shadow-sm focus:outline-none focus:bg-surface focus:ring-2 focus:ring-primary-container/20 transition-all placeholder:text-outline resize-none" id="candidateMessage" name="message" placeholder="Tell us how we can help with your selected service..." required rows="4">{{ old('message') }}</textarea>
                             </div>
                             <!-- Privacy Consent Checkbox -->
                             <div class="flex items-start gap-space-sm pt-space-xs">
-                                <input checked="" class="w-4 h-4 rounded text-primary mt-1 focus:ring-primary-container cursor-pointer accent-primary-container" id="privacyConsent" name="privacyConsent" required="" type="checkbox" />
+                                <input class="w-4 h-4 rounded text-primary mt-1 focus:ring-primary-container cursor-pointer accent-primary-container" id="privacyConsent" name="privacy_consent" value="1" required type="checkbox" />
                                 <label class="font-body-sm text-body-sm text-on-surface-variant cursor-pointer select-none" for="privacyConsent">
                                     I agree to Oxford Processing contacting me regarding this enquiry in accordance with the
                                     <a class="text-primary font-semibold hover:underline" data-path="privacy-policy" href="#">Privacy Policy</a>.
@@ -259,15 +261,17 @@
                             </div>
                         </form>
                         <!-- Simulated Interactive Success Notification (Triggered on submit) -->
-                        <div class="hidden mt-space-md p-space-md rounded bg-surface-container-high shadow-md" id="enquirySuccessToast">
+                        @if (session('enquiry_submitted'))
+                        <div class="mt-space-md p-space-md rounded bg-surface-container-high shadow-md" id="enquirySuccessToast">
                             <div class="flex items-start gap-space-sm">
                                 <span class="material-symbols-outlined text-emerald-800 text-[24px] shrink-0">task_alt</span>
                                 <div class="flex flex-col">
-                                    <span class="font-label-md text-label-md text-primary font-bold">Dossier Ticket #OXP-2025-0814 Created</span>
+                                    <span class="font-label-md text-label-md text-primary font-bold">Enquiry received</span>
                                     <p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
                                         Thank you! Your enquiry has been received. Our Kottayam consultancy team will contact you within business hours.
                                     </p>
                                 </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -427,6 +431,20 @@
                     const specificSelect = document.getElementById('specificService');
                     if (!specificSelect) return;
 
+                    const serviceOptions = Array.from(specificSelect.options).slice(1);
+                    serviceOptions.forEach(function(option) {
+                        const matchesCategory = category && option.dataset.category === category;
+                        option.hidden = !matchesCategory;
+                        option.disabled = !matchesCategory;
+                    });
+
+                    const selectedOption = specificSelect.options[specificSelect.selectedIndex];
+                    if (selectedOption && selectedOption.dataset.category !== category) {
+                        specificSelect.value = '';
+                    }
+
+                    return;
+
                     const optionsMap = {
                         'licensing': [{
                                 val: 'nmbi-dl',
@@ -542,17 +560,7 @@
                     });
                 }
 
-                function handleFormSubmit() {
-                    const toast = document.getElementById('enquirySuccessToast');
-                    const form = document.getElementById('oxfordEnquiryForm');
-                    if (toast) {
-                        toast.classList.remove('hidden');
-                        toast.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'nearest'
-                        });
-                    }
-                }
+                updateServiceOptions(document.getElementById('serviceCategory')?.value);
             </script>
         </div>
     

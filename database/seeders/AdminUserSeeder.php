@@ -9,9 +9,9 @@ class AdminUserSeeder extends Seeder
 {
     public function run(): void
     {
-        $name = 'super admin';
-        $email = 'oxfordprocessingkottayam@gmail.com';
-        $password = 'oxfordprocessing';
+        $name = config('admin.name');
+        $email = config('admin.email');
+        $password = config('admin.password');
 
         if (! $name && ! $email && ! $password) {
             $this->command?->warn('Admin user was not created. Set ADMIN_NAME, ADMIN_EMAIL, and ADMIN_PASSWORD to seed it.');

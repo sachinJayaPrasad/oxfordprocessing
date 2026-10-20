@@ -1,4 +1,4 @@
-<aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-lowest z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(4,38,94,0.04)]">
+<aside class="fixed left-0 top-0 hidden h-full w-72 bg-surface-container-lowest z-50 flex-col justify-between shadow-[0_1px_8px_rgba(4,38,94,0.04)] lg:flex">
     <div class="flex flex-col flex-1 overflow-y-auto">
         <a href="{{ route('admin.dashboard') }}" class="px-6 py-5 flex items-center gap-3.5 bg-surface-container-low">
             <div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary shadow-sm">
