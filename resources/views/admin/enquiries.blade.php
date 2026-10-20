@@ -98,7 +98,7 @@
     </section>
 
     <section class="bg-surface-container-lowest rounded-xl p-5 shadow-sm">
-        <form method="GET" action="{{ route('admin.enquiries') }}" class="grid grid-cols-1 md:grid-cols-[1fr_12rem_10rem_auto] gap-3">
+        <form method="GET" action="{{ route('admin.enquiries') }}" class="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_12rem_10rem_auto]">
             <label class="sr-only" for="search">Search enquiries</label>
             <input id="search" name="search" type="search" value="{{ $filters['search'] ?? '' }}" placeholder="Search name, email, phone, or service"
                 class="h-11 px-4 rounded-lg bg-surface-container-low text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container">

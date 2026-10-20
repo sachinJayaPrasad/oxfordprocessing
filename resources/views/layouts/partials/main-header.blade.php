@@ -1,4 +1,4 @@
-<header class="fixed top-0 left-0 right-0 w-full z-50">
+<header class="sticky top-0 w-full z-50">
         <div class="bg-primary-container text-on-primary py-space-xs text-label-sm border-b border-secondary/30">
             <div class="max-w-7xl mx-auto px-margin flex flex-wrap items-center justify-between gap-space-sm">
                 <div class="flex items-center gap-space-md text-primary-fixed-dim"><span class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[14px] text-secondary-container">schedule</span>Mon - Sat: 10:00 AM – 5:00 PM</span><span class="hidden lg:inline text-outline-variant">|</span><span class="hidden lg:flex items-center gap-space-xs"><span class="material-symbols-outlined text-[14px] text-secondary-container">location_on</span>Reliable Bldg, Manorama Jnc, Kottayam</span></div>
@@ -9,8 +9,8 @@
         </div>
         <div class="bg-surface-container-lowest/95 backdrop-blur-md border-b border-surface-container-high shadow-[0_2px_12px_rgba(4,38,94,0.06)]">
             <div class="h-20 max-w-7xl mx-auto px-margin flex items-center justify-between gap-space-md">
-                <div class="flex items-center gap-space-md"><a class="flex items-center gap-space-sm" data-path="home" href="{{ route('home') }}"><img alt="Oxford Processing Official Logo" class="h-10 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XxIOQAxwfnhsmJKlcSihDc63E1pUlvxIImzH6lGoPzZkaD0D4DCOuP0g7OwfOaFTWq3DB6UMmYhk2QwnMJ7gQgsxPa9FCUPy2bmDU261iyKnjKeb573F6btWQh369LqBuwkAZoLIw4l3hA074W4cPTiprVjzJUNfI0keUPLAkyXlkVHd2UHQ93jHxXpD9o3wQfkCjrXkawFv-Kdha-yhkTyYKZUHKGhMYspdlIgYKb81C82CgfV2wphbI" />
-                        <div class="flex flex-col"><span class="font-headline-sm text-title-md text-primary font-bold tracking-tight">Oxford Processing</span><span class="font-label-sm text-[11px] text-secondary tracking-widest uppercase font-semibold">Bridging Talent, Building Future</span></div>
+                <div class="flex min-w-0 items-center gap-space-sm sm:gap-space-md"><a class="flex min-w-0 items-center gap-space-sm" data-path="home" href="{{ route('home') }}"><img alt="Oxford Processing Official Logo" class="h-8 w-auto max-w-[7.5rem] object-contain sm:h-10 sm:max-w-none" src="https://lh3.googleusercontent.com/aida/AEtjO1XxIOQAxwfnhsmJKlcSihDc63E1pUlvxIImzH6lGoPzZkaD0D4DCOuP0g7OwfOaFTWq3DB6UMmYhk2QwnMJ7gQgsxPa9FCUPy2bmDU261iyKnjKeb573F6btWQh369LqBuwkAZoLIw4l3hA074W4cPTiprVjzJUNfI0keUPLAkyXlkVHd2UHQ93jHxXpD9o3wQfkCjrXkawFv-Kdha-yhkTyYKZUHKGhMYspdlIgYKb81C82CgfV2wphbI" />
+                        <div class="hidden flex-col sm:flex"><span class="font-headline-sm text-title-md text-primary font-bold tracking-tight">Oxford Processing</span><span class="font-label-sm text-[11px] text-secondary tracking-widest uppercase font-semibold">Bridging Talent, Building Future</span></div>
                     </a></div>
                 <nav class="hidden xl:flex items-center gap-space-lg" data-active-classes="text-primary border-b-2 border-secondary font-semibold"><a @if ($activePage === 'home') aria-current="page" @endif class="{{ $activePage === 'home' ? 'transition-colors py-space-sm text-primary border-b-2 border-secondary font-semibold' : 'font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors py-space-sm' }}" data-path="home" href="{{ route('home') }}">Home</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors py-space-sm" data-path="about-us" href="{{ route('home') }}#about-us">About Us</a>
                     <div class="relative group py-space-sm"><a @if ($activePage === 'services') aria-current="page" @endif class="{{ $activePage === 'services' ? 'flex items-center gap-space-xs font-label-md text-label-md text-primary font-semibold transition-colors' : 'flex items-center gap-space-xs font-label-md text-label-md text-on-surface-variant group-hover:text-primary transition-colors' }}" data-path="services" href="{{ route('services') }}">Services<span class="material-symbols-outlined text-[16px] transition-transform duration-200 group-hover:rotate-180">expand_more</span></a>
@@ -22,7 +22,7 @@
                         <span class="material-symbols-outlined text-[20px]">menu</span>
                         <span>Menu</span>
                     </summary>
-                    <nav aria-label="Mobile navigation" class="absolute right-0 top-full mt-2 flex w-64 flex-col rounded-xl border border-surface-container-high bg-surface-container-lowest p-space-sm shadow-xl">
+                    <nav aria-label="Mobile navigation" class="absolute right-0 top-full mt-2 flex w-56 flex-col rounded-xl border border-surface-container-high bg-surface-container-lowest p-space-sm shadow-xl">
                         <a class="rounded-lg px-space-md py-space-sm text-on-surface-variant hover:bg-surface-container hover:text-primary" href="{{ route('home') }}">Home</a>
                         <a class="rounded-lg px-space-md py-space-sm text-on-surface-variant hover:bg-surface-container hover:text-primary" href="{{ route('home') }}#about-us">About Us</a>
                         <a class="rounded-lg px-space-md py-space-sm text-on-surface-variant hover:bg-surface-container hover:text-primary" href="{{ route('services') }}">All Services</a>
@@ -34,9 +34,9 @@
                         <a class="rounded-lg px-space-md py-space-sm text-on-surface-variant hover:bg-surface-container hover:text-primary" href="{{ route('contact') }}">Contact Us</a>
                     </nav>
                 </details>
-                <div class="flex items-center gap-space-md">
-                    <div class="hidden md:flex items-center gap-space-xs text-primary font-label-md text-label-md"><span class="material-symbols-outlined text-secondary text-[20px]">call</span><span class="font-semibold">+91 92927 97682</span></div><a class="inline-flex items-center justify-center bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md px-space-md py-space-sm rounded-lg shadow-sm border border-secondary/50 hover:shadow-md transition-all gap-space-xs" data-path="enquiry" href="{{ route('contact') }}#oxfordEnquiryForm"><span class="material-symbols-outlined text-[18px] text-secondary-container">edit_note</span><span>Enquire Now</span></a>
-                    <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div>
+                <div class="flex shrink-0 items-center gap-space-xs sm:gap-space-md">
+                    <div class="hidden md:flex items-center gap-space-xs text-primary font-label-md text-label-md"><span class="material-symbols-outlined text-secondary text-[20px]">call</span><span class="font-semibold">+91 92927 97682</span></div><a aria-label="Enquire now" class="inline-flex items-center justify-center bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md px-2 py-space-sm sm:px-space-md rounded-lg shadow-sm border border-secondary/50 hover:shadow-md transition-all gap-space-xs" data-path="enquiry" href="{{ route('contact') }}#oxfordEnquiryForm"><span class="material-symbols-outlined text-[18px] text-secondary-container">edit_note</span><span class="hidden sm:inline">Enquire Now</span></a>
+                    <div class="hidden h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary sm:flex"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div>
                 </div>
             </div>
         </div>

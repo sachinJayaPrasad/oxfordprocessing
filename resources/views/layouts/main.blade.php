@@ -195,7 +195,7 @@
 </head>
 <body class="bg-surface font-body-md text-body-md text-on-surface antialiased">
     @include('layouts.partials.main-header', ['activePage' => trim($__env->yieldContent('activePage'))])
-    <main class="w-full pt-[116px] bg-surface min-h-[calc(100vh-200px)]">
+    <main class="w-full bg-surface min-h-[calc(100vh-200px)]">
         @yield('content')
     </main>
     @include('layouts.partials.main-whatsapp')
