@@ -21,6 +21,23 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
+## Admin API
+
+The versioned admin API is available under `/api/v1/admin`. Create the database tables and populate the service catalog with:
+
+```sh
+php artisan migrate
+php artisan db:seed --class=ServiceCatalogSeeder
+```
+
+Set `ADMIN_NAME`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` in `.env` (the password must be at least 12 characters), then create or update the admin account with:
+
+```sh
+php artisan db:seed --class=AdminUserSeeder
+```
+
+Authenticate with `POST /api/v1/admin/login` using `email` and `password`, then send the returned bearer token in the `Authorization: Bearer <token>` header. The protected endpoints are `POST /logout`, `GET /me`, and the standard index, create, show, update, and delete routes for `/services` and `/enquiries`. Enquiry listing accepts optional `status` and `search` query parameters.
+
 ## Learning Laravel
 
 Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
