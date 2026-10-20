@@ -1,21 +1,54 @@
 <aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-lowest z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(4,38,94,0.04)]">
-        <div class="flex flex-col flex-1 overflow-y-auto">
-            <div class="px-6 py-5 flex items-center gap-3.5 bg-surface-container-low">
-                <div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary font-headline-sm text-headline-sm shadow-sm"><span class="material-symbols-outlined text-[22px]">account_balance</span></div>
-                <div class="flex flex-col"><span class="font-headline-sm text-headline-sm tracking-tight text-primary leading-tight">Oxford Processing</span>
-                    <div class="flex items-center gap-1.5 mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span><span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Bureau Control Desk</span></div>
-                </div>
+    <div class="flex flex-col flex-1 overflow-y-auto">
+        <a href="{{ route('admin.dashboard') }}" class="px-6 py-5 flex items-center gap-3.5 bg-surface-container-low">
+            <div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary shadow-sm">
+                <span class="material-symbols-outlined text-[22px]">account_balance</span>
             </div>
-            <div class="px-6 pt-4 pb-2"><span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Main Navigation</span></div>
-            <nav class="flex-1 px-3 space-y-1" data-active-classes="bg-primary-container text-on-primary font-title-md"><a @if ($activePage === 'dashboard') aria-current="page" @endif class="{{ $activePage === 'dashboard' ? 'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors bg-primary-container text-on-primary font-title-md' : 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md' }}" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span>Dashboard</span></a><a @if ($activePage === 'enquiries') aria-current="page" @endif class="{{ $activePage === 'enquiries' ? 'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors bg-primary-container text-on-primary font-title-md' : 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md' }}" data-path="enquiries" href="#"><span class="material-symbols-outlined text-[20px]">folder_shared</span><span>Enquiries</span></a><a @if ($activePage === 'services') aria-current="page" @endif class="{{ $activePage === 'services' ? 'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors bg-primary-container text-on-primary font-title-md' : 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md' }}" data-path="services" href="#"><span class="material-symbols-outlined text-[20px]">inventory_2</span><span>Services</span></a><a @if ($activePage === 'service-categories') aria-current="page" @endif class="{{ $activePage === 'service-categories' ? 'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors bg-primary-container text-on-primary font-title-md' : 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md' }}" data-path="service-categories" href="#"><span class="material-symbols-outlined text-[20px]">category</span><span>Service Categories</span></a><a @if ($activePage === 'website-content') aria-current="page" @endif class="{{ $activePage === 'website-content' ? 'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors bg-primary-container text-on-primary font-title-md' : 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md' }}" data-path="website-content" href="#"><span class="material-symbols-outlined text-[20px]">article</span><span>Website Content</span></a><a @if ($activePage === 'contact-information') aria-current="page" @endif class="{{ $activePage === 'contact-information' ? 'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors bg-primary-container text-on-primary font-title-md' : 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md' }}" data-path="contact-information" href="#"><span class="material-symbols-outlined text-[20px]">domain</span><span>Contact Information</span></a><a @if ($activePage === 'social-links') aria-current="page" @endif class="{{ $activePage === 'social-links' ? 'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors bg-primary-container text-on-primary font-title-md' : 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md' }}" data-path="social-links" href="#"><span class="material-symbols-outlined text-[20px]">share</span><span>Social Links</span></a><a @if ($activePage === 'seo-settings') aria-current="page" @endif class="{{ $activePage === 'seo-settings' ? 'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors bg-primary-container text-on-primary font-title-md' : 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md' }}" data-path="seo-settings" href="#"><span class="material-symbols-outlined text-[20px]">troubleshoot</span><span>SEO Settings</span></a><a @if ($activePage === 'admin-settings') aria-current="page" @endif class="{{ $activePage === 'admin-settings' ? 'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors bg-primary-container text-on-primary font-title-md' : 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md' }}" data-path="admin-settings" href="#"><span class="material-symbols-outlined text-[20px]">tune</span><span>Admin Settings</span></a></nav>
-            <div class="px-3 pt-2 pb-4"><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-error hover:bg-error-container hover:text-on-error-container transition-colors font-body-md text-body-md" data-path="logout" href="#"><span class="material-symbols-outlined text-[20px]">logout</span><span>Logout</span></a></div>
-        </div>
-        <div class="p-4 m-3 rounded-lg bg-surface-container-low shadow-[0_1px_3px_0_rgba(4,38,94,0.04)]">
-            <div class="flex items-center justify-between mb-2"><span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Station Desk</span><span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-label-sm bg-surface-container-highest text-primary">Kerala Hub</span></div>
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-md text-label-md font-semibold">KD</div>
-                <div class="flex flex-col min-w-0"><span class="font-label-md text-label-md text-on-surface font-semibold truncate">Kottayam Desk Admin</span><span class="font-body-sm text-body-sm text-on-surface-variant truncate">Sr. Bureau Administrator</span></div>
+            <div class="flex flex-col">
+                <span class="font-headline-sm text-headline-sm tracking-tight text-primary leading-tight">Oxford Processing</span>
+                <span class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Admin Control Desk</span>
             </div>
-            <div class="mt-3 pt-2.5 border-t border-outline-variant/30 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span><span class="font-label-sm text-label-sm text-on-surface-variant">Status: Secure Session Active</span></div>
+        </a>
+
+        <div class="px-6 pt-4 pb-2">
+            <span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Main Navigation</span>
         </div>
-    </aside>
+        <nav class="flex-1 px-3 space-y-1" aria-label="Admin navigation">
+            @foreach ([
+                'dashboard' => ['label' => 'Dashboard', 'icon' => 'grid_view', 'route' => 'admin.dashboard'],
+                'enquiries' => ['label' => 'Enquiries', 'icon' => 'folder_shared', 'route' => 'admin.enquiries'],
+                'services' => ['label' => 'Services', 'icon' => 'inventory_2', 'route' => 'admin.services'],
+            ] as $page => $item)
+                <a href="{{ route($item['route']) }}"
+                   @if ($activePage === $page) aria-current="page" @endif
+                   class="{{ $activePage === $page ? 'flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary-container text-on-primary font-title-md' : 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md' }}">
+                    <span class="material-symbols-outlined text-[20px]">{{ $item['icon'] }}</span>
+                    <span>{{ $item['label'] }}</span>
+                </a>
+            @endforeach
+        </nav>
+
+        <div class="px-3 pt-2 pb-4">
+            <form method="POST" action="{{ route('admin.logout') }}">
+                @csrf
+                <button type="submit" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-error hover:bg-error-container hover:text-on-error-container transition-colors font-body-md text-body-md">
+                    <span class="material-symbols-outlined text-[20px]">logout</span>
+                    <span>Logout</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="p-4 m-3 rounded-lg bg-surface-container-low">
+        <span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Signed in as</span>
+        <div class="mt-2 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-md text-label-md font-semibold">
+                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+            </div>
+            <div class="flex flex-col min-w-0">
+                <span class="font-label-md text-label-md text-on-surface font-semibold truncate">{{ auth()->user()->name }}</span>
+                <span class="font-body-sm text-body-sm text-on-surface-variant truncate">{{ auth()->user()->email }}</span>
+            </div>
+        </div>
+    </div>
+</aside>

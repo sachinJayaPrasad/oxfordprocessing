@@ -13,6 +13,31 @@ class AdminApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_admin_web_pages_require_login_and_can_be_viewed_after_sign_in(): void
+    {
+        $this->get('/admin')->assertRedirect(route('admin.login'));
+        $this->get('/admin/login')->assertOk()->assertSee('Admin sign in');
+
+        $admin = User::create([
+            'name' => 'Admin User',
+            'email' => 'admin@example.test',
+            'password' => Hash::make('password'),
+            'is_admin' => true,
+        ]);
+
+        $this->post('/admin/login', [
+            'email' => $admin->email,
+            'password' => 'password',
+        ])->assertRedirect(route('admin.dashboard'));
+
+        $this->get('/admin')->assertOk()->assertSee('Oxford');
+        $this->get('/admin/services')->assertOk()->assertSee('Service Catalogue Management');
+        $this->get('/admin/enquiries')->assertOk()->assertSee('Enquiries Management');
+
+        $this->post('/admin/logout')->assertRedirect(route('admin.login'));
+        $this->get('/admin')->assertRedirect(route('admin.login'));
+    }
+
     public function test_admin_authentication_and_access_control(): void
     {
         $this->getJson('/api/v1/admin/services')->assertUnauthorized();

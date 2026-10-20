@@ -11,6 +11,14 @@ class EnsureAdmin
     public function handle(Request $request, Closure $next): Response
     {
         if (! $request->user()?->is_admin) {
+            if (! $request->expectsJson()) {
+                if (! $request->user()) {
+                    return redirect()->guest(route('admin.login'));
+                }
+
+                abort(Response::HTTP_FORBIDDEN);
+            }
+
             return response()->json([
                 'message' => 'Administrator access is required.',
             ], Response::HTTP_FORBIDDEN);

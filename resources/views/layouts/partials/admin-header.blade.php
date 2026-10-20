@@ -8,7 +8,7 @@
                 <div class="h-6 w-[1px] bg-outline-variant/40"></div>
                 <div class="flex items-center gap-3 pl-1">
                     <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div>
-                    <div class="hidden xl:flex flex-col text-left"><span class="font-label-md text-label-md text-on-surface font-semibold leading-tight">Admin User</span><span class="font-body-sm text-body-sm text-on-surface-variant leading-none">admin@oxfordprocessing.com</span></div><span class="material-symbols-outlined text-on-surface-variant text-[18px]">expand_more</span>
+                    <div class="hidden xl:flex flex-col text-left"><span class="font-label-md text-label-md text-on-surface font-semibold leading-tight">{{ auth()->user()->name }}</span><span class="font-body-sm text-body-sm text-on-surface-variant leading-none">{{ auth()->user()->email }}</span></div>
                 </div>
             </div>
         </header>
