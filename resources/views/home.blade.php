@@ -137,9 +137,9 @@
                     <div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-margin-md">
                         <div>
                             <span class="font-label-sm text-label-sm text-secondary uppercase font-bold tracking-widest">Consultancy Verticals</span>
-                            <h2 class="font-headline-xl text-headline-xl text-primary font-bold mt-1">Structured Service Architecture</h2>
+                            <h2 class="font-headline-xl text-headline-xl text-primary font-bold mt-1">Services by category</h2>
                             <p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mt-1">
-                                Navigating rigorous procedural protocols across thirty specialized processing workflows.
+                                Browse the services currently available in each category.
                             </p>
                         </div>
                         <a class="inline-flex items-center gap-space-xs font-label-md text-label-md text-primary font-semibold hover:text-secondary transition-colors" data-path="services" href="{{ route('services') }}">
@@ -149,6 +149,28 @@
                     </div>
                     <!-- Category Bento Grid: 5 cards arranged dynamically -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+                        @forelse ($categories as $category)
+                            <article class="group relative rounded-xl bg-surface p-space-xl shadow-sm transition-all duration-300 hover:shadow-xl">
+                                <div class="mb-space-md flex items-center justify-between">
+                                    <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-surface-container-high text-primary transition-colors group-hover:bg-primary group-hover:text-on-primary">
+                                        <span class="material-symbols-outlined text-[32px]" aria-hidden="true">category</span>
+                                    </div>
+                                    <span class="rounded-full bg-surface-container-highest px-space-md py-1 font-label-sm text-label-sm font-semibold text-primary">
+                                        {{ $category->services_count }} {{ \Illuminate\Support\Str::plural('service', $category->services_count) }}
+                                    </span>
+                                </div>
+                                <h3 class="mb-space-lg font-headline-md text-headline-md font-bold text-primary">{{ $category->name }}</h3>
+                                <a class="inline-flex items-center gap-space-xs font-label-md text-label-md font-semibold text-primary transition-colors group-hover:text-secondary"
+                                    href="{{ route('services', ['category' => $category->name]) }}">
+                                    <span>Browse category</span>
+                                    <span class="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1" aria-hidden="true">arrow_forward</span>
+                                </a>
+                            </article>
+                        @empty
+                            <p class="text-on-surface-variant">Service categories will appear here soon.</p>
+                        @endforelse
+                    </div>
+                    {{-- Legacy static cards retained temporarily while the dynamic catalogue is used.
                         <!-- Category 1: Overseas Registration & Licensing (Featured, spans 2 cols on lg) -->
                         <div class="lg:col-span-2 group relative p-space-xl rounded-xl bg-surface shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden">
                             <div class="absolute top-0 left-0 right-0 h-1 bg-secondary opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -157,6 +179,7 @@
                                     <div class="w-14 h-14 rounded-xl bg-surface-container-high flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-on-primary transition-colors">
                                         <span class="material-symbols-outlined text-[32px]">license</span>
                                     </div>
+                                    --}}
                                     <span class="px-space-md py-1 rounded-full bg-surface-container-highest text-primary font-label-sm text-label-sm font-semibold">
                                         11 Structured Services
                                     </span>

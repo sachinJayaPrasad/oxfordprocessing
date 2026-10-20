@@ -98,7 +98,7 @@
                             <h2 class="text-headline-sm font-headline-sm text-primary font-bold">Related services</h2>
                             <div class="mt-space-sm space-y-1">
                                 @foreach ($relatedServices as $relatedService)
-                                    <a class="block rounded-lg p-space-sm text-body-sm font-body-sm text-on-surface hover:bg-surface-container hover:text-primary transition-colors" href="{{ route('service.detail', ['slug' => \Illuminate\Support\Str::slug($relatedService['title'])]) }}">
+                                    <a class="block rounded-lg p-space-sm text-body-sm font-body-sm text-on-surface hover:bg-surface-container hover:text-primary transition-colors" href="{{ route('service.detail', ['slug' => $relatedService['slug']]) }}">
                                         {{ $relatedService['title'] }}
                                     </a>
                                 @endforeach

@@ -7,6 +7,7 @@ use App\Models\Service;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class ServiceController extends Controller
 {
@@ -57,7 +58,7 @@ class ServiceController extends Controller
 
         return $request->validate([
             'title' => [$required, 'string', 'max:255'],
-            'category' => [$required, 'string', 'max:255'],
+            'category' => [$required, Rule::exists('service_categories', 'name')],
             'authority' => [$required, 'string', 'max:255'],
             'summary' => [$required, 'string', 'max:5000'],
             'requirements' => [$required, 'string', 'max:5000'],

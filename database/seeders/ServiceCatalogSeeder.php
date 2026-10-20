@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Service;
+use App\Models\ServiceCategory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -18,6 +19,7 @@ class ServiceCatalogSeeder extends Seeder
 
         foreach ($services as $service) {
             $slug = Str::slug($service['title']);
+            ServiceCategory::firstOrCreate(['name' => $service['category']]);
 
             Service::firstOrCreate(
                 ['slug' => $slug],

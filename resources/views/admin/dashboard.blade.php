@@ -70,7 +70,7 @@
                             <td class="px-4 py-3 whitespace-nowrap">{{ $enquiry->created_at->format('M j, Y g:i A') }}</td>
                             <td class="px-4 py-3">{{ str($enquiry->status)->replace('_', ' ')->upper() }}</td>
                             <td class="px-4 py-3">
-                                <a href="{{ route('admin.enquiries', ['enquiry' => $enquiry->id]) }}" class="text-primary underline underline-offset-2">View</a>
+                                <a href="{{ route('admin.enquiries.show', $enquiry) }}" class="text-primary underline underline-offset-2">View</a>
                             </td>
                         </tr>
                     @empty

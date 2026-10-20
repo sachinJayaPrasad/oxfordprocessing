@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Enquiry;
 use App\Models\Service;
+use App\Models\ServiceCategory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -26,7 +27,10 @@ class PublicEnquiryController extends Controller
 
         return view('contact-us', [
             'services' => $services,
-            'categories' => $services->pluck('category')->unique()->values(),
+            'categories' => ServiceCategory::query()
+                ->whereHas('services', fn ($query) => $query->where('is_published', true))
+                ->orderBy('name')
+                ->pluck('name'),
             'selectedService' => $selectedService,
         ]);
     }

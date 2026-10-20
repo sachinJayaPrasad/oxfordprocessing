@@ -154,14 +154,12 @@
                                         <p class="break-all text-xs text-on-surface-variant">{{ $enquiry->email ?: 'Email not provided' }}</p>
                                         <p class="mt-1 text-xs text-on-surface-variant">{{ \Illuminate\Support\Str::limit($enquiry->message, 100) }}</p>
                                     </div>
-                                    <button type="button"
+                                    <a
                                         class="shrink-0 rounded-md p-1 text-primary hover:bg-surface-container-high"
                                         aria-label="View profile description for {{ $enquiry->name }}"
-                                        data-description="{{ $enquiry->message }}"
-                                        data-name="{{ $enquiry->name }}"
-                                        onclick="openDescription(this)">
+                                        href="{{ route('admin.enquiries.show', $enquiry) }}">
                                         <span class="material-symbols-outlined text-[18px]" aria-hidden="true">visibility</span>
-                                    </button>
+                                    </a>
                                 </div>
                             </td>
                             <td data-label="Contact" class="px-3 py-3">{{ $enquiry->phone }}</td>
@@ -228,47 +226,33 @@
                     Showing 0 enquiries
                 @endif
             </p>
-            <div>{{ $enquiries->links() }}</div>
+            <nav class="flex flex-wrap items-center justify-center gap-1" aria-label="Enquiry pagination">
+                @php
+                    $firstPage = max(1, $enquiries->currentPage() - 2);
+                    $lastPage = min($enquiries->lastPage(), $enquiries->currentPage() + 2);
+                @endphp
+                @if ($enquiries->onFirstPage())
+                    <span class="rounded border border-outline-variant px-3 py-2 text-sm text-on-surface-variant" aria-disabled="true">Previous</span>
+                @else
+                    <a href="{{ $enquiries->previousPageUrl() }}" class="rounded border border-outline-variant px-3 py-2 text-sm text-primary hover:bg-surface-container-low">Previous</a>
+                @endif
+
+                @foreach (range($firstPage, max($firstPage, $lastPage)) as $page)
+                    @if ($page === $enquiries->currentPage())
+                        <span class="rounded bg-primary px-3 py-2 text-sm font-semibold text-on-primary" aria-current="page">{{ $page }}</span>
+                    @else
+                        <a href="{{ $enquiries->url($page) }}" class="rounded border border-outline-variant px-3 py-2 text-sm text-primary hover:bg-surface-container-low" aria-label="Go to page {{ $page }}">{{ $page }}</a>
+                    @endif
+                @endforeach
+
+                @if ($enquiries->hasMorePages())
+                    <a href="{{ $enquiries->nextPageUrl() }}" class="rounded border border-outline-variant px-3 py-2 text-sm text-primary hover:bg-surface-container-low">Next</a>
+                @else
+                    <span class="rounded border border-outline-variant px-3 py-2 text-sm text-on-surface-variant" aria-disabled="true">Next</span>
+                @endif
+            </nav>
         </div>
     </section>
 </div>
 
-<div id="descriptionModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-slate-950/60 p-4" role="dialog" aria-modal="true" aria-labelledby="descriptionModalTitle">
-    <div class="w-full max-w-2xl rounded-xl bg-white p-6 shadow-2xl">
-        <div class="flex items-start justify-between gap-4">
-            <div>
-                <span class="text-sm font-semibold uppercase tracking-wider text-secondary">Profile Description</span>
-                <h2 id="descriptionModalTitle" class="mt-1 text-xl font-bold text-primary"></h2>
-            </div>
-            <button type="button" onclick="closeDescription()" class="rounded-md p-2 text-slate-600 hover:bg-slate-100" aria-label="Close description">
-                <span class="material-symbols-outlined" aria-hidden="true">close</span>
-            </button>
-        </div>
-        <p id="descriptionModalText" class="mt-5 max-h-[60vh] overflow-y-auto whitespace-pre-wrap break-words rounded-lg bg-slate-50 p-4 text-slate-800"></p>
-    </div>
-</div>
-
-<script>
-    const descriptionModal = document.getElementById('descriptionModal');
-
-    function openDescription(button) {
-        document.getElementById('descriptionModalTitle').textContent = button.dataset.name;
-        document.getElementById('descriptionModalText').textContent = button.dataset.description;
-        descriptionModal.classList.remove('hidden');
-        descriptionModal.classList.add('flex');
-    }
-
-    function closeDescription() {
-        descriptionModal.classList.add('hidden');
-        descriptionModal.classList.remove('flex');
-    }
-
-    descriptionModal.addEventListener('click', function (event) {
-        if (event.target === descriptionModal) closeDescription();
-    });
-
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') closeDescription();
-    });
-</script>
 @endsection

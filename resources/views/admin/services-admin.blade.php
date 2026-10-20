@@ -1,628 +1,300 @@
 @extends('layouts.admin')
 @section('activePage', 'services')
 @section('content')
-<div class="flex flex-col w-full">
-    <!-- Top Operational Banner & Meta Context -->
-    <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="flex flex-col gap-6">
+    <header class="flex flex-col gap-4 rounded-xl bg-surface-container-lowest p-6 shadow-sm sm:flex-row sm:items-end sm:justify-between">
         <div>
-            <h1 class="font-headline-xl text-headline-xl text-primary tracking-tight">Service Catalogue Management</h1>
-            <p class="font-body-md text-body-md text-on-surface-variant max-w-3xl mt-1">Maintain, edit, and organize all 30 public services across the five core operational categories.</p>
+            <span class="font-label-sm uppercase tracking-wider text-secondary">Website content</span>
+            <h1 class="text-2xl font-bold text-primary">Service Catalogue</h1>
+            <p class="mt-1 text-on-surface-variant">Create, edit, publish, or remove services shown to visitors.</p>
         </div>
-        <div class="flex items-center gap-3 self-start md:self-auto shrink-0">
-            <div class="bg-surface-container-lowest px-4 py-2.5 rounded-xl shadow-sm flex items-center gap-3.5">
-                <div class="w-2.5 h-2.5 rounded-full bg-secondary animate-pulse"></div>
-                <div class="flex flex-col">
-                    <span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Catalogue Health</span>
-                    <span class="font-title-md text-title-md text-primary font-semibold leading-tight">30 of 30 services active</span>
+        <a href="{{ route('admin.services', [...request()->query(), 'create' => 1]) }}#service-form" class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 font-semibold text-on-primary hover:bg-primary-container">
+            <span class="material-symbols-outlined" aria-hidden="true">add</span>
+            Add service
+        </a>
+    </header>
+
+    <section class="grid grid-cols-1 gap-3 sm:grid-cols-3" aria-label="Service catalogue totals">
+        @foreach ([
+            ['label' => 'All services', 'count' => $totalServices],
+            ['label' => 'Published', 'count' => $publishedServices],
+            ['label' => 'Drafts', 'count' => $draftServices],
+        ] as $metric)
+            <div class="rounded-xl bg-surface-container-lowest p-4 shadow-sm">
+                <p class="text-sm text-on-surface-variant">{{ $metric['label'] }}</p>
+                <p class="mt-1 text-2xl font-bold text-primary">{{ $metric['count'] }}</p>
+            </div>
+        @endforeach
+    </section>
+
+    @if (session('category_saved'))
+        <p class="rounded-lg bg-emerald-100 p-4 text-emerald-900" role="status">
+            @if (session('category_saved') === 'deleted')
+                Category deleted successfully. {{ session('category_deleted_services', 0) }} related {{ \Illuminate\Support\Str::plural('service', session('category_deleted_services', 0)) }} deleted.
+            @else
+                Category {{ session('category_saved') }} successfully.
+            @endif
+        </p>
+    @endif
+    @if (session('service_saved'))
+        <p class="rounded-lg bg-emerald-100 p-4 text-emerald-900" role="status">
+            Service {{ session('service_saved') }} successfully.
+        </p>
+    @endif
+    @if ($errors->any())
+        <div class="rounded-lg bg-red-100 p-4 text-red-900" role="alert">
+            <p class="font-semibold">Please correct the following:</p>
+            <ul class="mt-1 list-inside list-disc">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <details class="group rounded-xl bg-surface-container-lowest p-5 shadow-sm" @if ($errors->has('name') || $errors->has('category')) open @endif>
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-4" aria-controls="service-category-manager">
+            <span>
+                <span class="block text-sm font-semibold uppercase tracking-wider text-secondary">Catalogue organization</span>
+                <span class="mt-1 block text-xl font-bold text-primary">Service categories</span>
+                <span class="mt-1 block text-sm text-on-surface-variant">Add or rename categories. Deleting a category also permanently deletes all services assigned to it.</span>
+            </span>
+            <span class="material-symbols-outlined shrink-0 text-primary transition-transform group-open:rotate-180" aria-hidden="true">expand_more</span>
+        </summary>
+        <div id="service-category-manager" class="mt-5 border-t border-surface-container pt-5">
+            <form method="POST" action="{{ route('admin.service-categories.store') }}" class="mb-5 flex flex-col gap-3 sm:flex-row">
+                @csrf
+                <label class="sr-only" for="new-category-name">New category name</label>
+                <input id="new-category-name" name="name" required maxlength="255" value="{{ old('name') }}" placeholder="New category name" class="h-11 min-w-0 flex-1 rounded-lg border border-outline-variant bg-white px-3">
+                <button type="submit" class="h-11 rounded-lg bg-primary px-5 font-semibold text-on-primary">Add category</button>
+            </form>
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[560px] text-left text-sm">
+                    <thead class="bg-surface-container-low text-xs uppercase tracking-wider text-on-surface-variant">
+                        <tr>
+                            <th class="px-4 py-3 font-semibold">Category name</th>
+                            <th class="px-4 py-3 font-semibold">Services</th>
+                            <th class="px-4 py-3 font-semibold">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-surface-container">
+                        @forelse ($categories as $category)
+                            <tr>
+                                <td class="px-4 py-3">
+                                    <form method="POST" action="{{ route('admin.service-categories.update', $category) }}" class="flex min-w-0 flex-wrap items-center gap-2">
+                                        @csrf
+                                        @method('PUT')
+                                        <label class="sr-only" for="category-{{ $category->id }}">Category name</label>
+                                        <input id="category-{{ $category->id }}" name="name" required maxlength="255" value="{{ $category->name }}" class="h-10 min-w-0 flex-1 rounded-lg border border-outline-variant bg-white px-3">
+                                        <button type="submit" class="font-semibold text-primary underline underline-offset-2">Save</button>
+                                    </form>
+                                </td>
+                                <td class="px-4 py-3 text-on-surface-variant">{{ $category->services_count }} services</td>
+                                <td class="px-4 py-3">
+                                    <button type="button"
+                                        class="font-semibold text-red-700 underline underline-offset-2"
+                                        data-category-delete
+                                        data-delete-url="{{ route('admin.service-categories.destroy', $category) }}"
+                                        data-category-name="{{ $category->name }}"
+                                        data-service-count="{{ $category->services_count }}">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="3" class="px-4 py-6 text-center text-on-surface-variant">No categories yet. Add one before creating a service.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </details>
+
+    <dialog id="delete-category-dialog" aria-labelledby="delete-category-title" aria-describedby="delete-category-message" class="w-[calc(100%-2rem)] max-w-lg rounded-xl p-0 shadow-2xl backdrop:bg-slate-950/50">
+        <div class="p-6">
+            <h2 id="delete-category-title" class="text-xl font-bold text-primary">Delete service category?</h2>
+            <p id="delete-category-message" class="mt-3 text-on-surface-variant"></p>
+            <div class="mt-6 flex justify-end gap-3">
+                <button type="button" data-category-delete-cancel class="rounded-lg border border-outline-variant px-4 py-2 font-semibold text-primary">Cancel</button>
+                <form id="delete-category-form" method="POST" action="">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="rounded-lg bg-red-700 px-4 py-2 font-semibold text-white hover:bg-red-800">Delete category and services</button>
+                </form>
+            </div>
+        </div>
+    </dialog>
+    <script>
+        (() => {
+            const dialog = document.getElementById('delete-category-dialog');
+            const deleteForm = document.getElementById('delete-category-form');
+            const message = document.getElementById('delete-category-message');
+
+            document.querySelectorAll('[data-category-delete]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const count = Number(button.dataset.serviceCount);
+                    const category = button.dataset.categoryName;
+
+                    deleteForm.action = button.dataset.deleteUrl;
+                    message.textContent = count > 0
+                        ? `The "${category}" category contains ${count} ${count === 1 ? 'service' : 'services'}. Deleting it will also permanently delete ${count === 1 ? 'this service' : 'all these services'}. This cannot be undone.`
+                        : `The "${category}" category has no services. This cannot be undone.`;
+                    dialog.showModal();
+                });
+            });
+
+            document.querySelector('[data-category-delete-cancel]').addEventListener('click', () => dialog.close());
+            dialog.addEventListener('click', (event) => {
+                if (event.target === dialog) {
+                    dialog.close();
+                }
+            });
+        })();
+    </script>
+
+    @if ($editingService || request()->boolean('create'))
+        <section id="service-form" class="scroll-mt-24 rounded-xl bg-surface-container-lowest p-5 shadow-sm sm:p-6">
+            <div class="mb-5 flex items-start justify-between gap-4">
+                <div>
+                    <span class="text-sm font-semibold uppercase tracking-wider text-secondary">{{ $editingService ? 'Update catalogue entry' : 'New catalogue entry' }}</span>
+                    <h2 class="mt-1 text-xl font-bold text-primary">{{ $editingService ? 'Edit service' : 'Create service' }}</h2>
                 </div>
+                <a href="{{ route('admin.services', request()->only(['search', 'category', 'status', 'per_page'])) }}" class="text-primary underline underline-offset-2">Cancel</a>
             </div>
-            <button class="bg-primary hover:bg-primary-container text-on-primary h-11 px-5 rounded-lg flex items-center gap-2 shadow-sm transition-all duration-200">
-                <span class="material-symbols-outlined text-[20px]">add</span>
-                <span class="font-label-md text-label-md font-semibold tracking-wide">+ Create New Service</span>
-            </button>
-        </div>
-    </div>
-    <!-- SECTION 1: Service Inventory & Controls -->
-    <section class="bg-surface-container-lowest rounded-xl shadow-sm p-6 mb-10">
-        <!-- Filter Controls Bar -->
-        <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-5 pb-6 border-b border-surface-container">
-            <!-- Search Input -->
-            <div class="relative flex-1 max-w-lg">
-                <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
-                <input class="w-full h-11 pl-11 pr-4 rounded-lg bg-surface-container-low font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest shadow-inner transition-colors" placeholder="Search services by name, keyword, or authority..." type="text" />
-            </div>
-            <!-- Publication Status Segment -->
-            <div class="flex items-center gap-2 self-start xl:self-auto">
-                <span class="font-label-sm text-label-sm uppercase tracking-wider text-outline mr-1">Status:</span>
-                <div class="inline-flex p-1 rounded-lg bg-surface-container-low">
-                    <button class="px-3 py-1.5 rounded-lg font-label-md text-label-md bg-surface-container-lowest text-primary shadow-sm font-semibold">Published (30)</button>
-                    <button class="px-3 py-1.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface font-medium transition-colors">Draft (0)</button>
-                    <button class="px-3 py-1.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface font-medium transition-colors">Archived (0)</button>
+            <form method="POST" action="{{ $editingService ? route('admin.services.update', $editingService) : route('admin.services.store') }}" class="space-y-4">
+                @csrf
+                @if ($editingService)
+                    @method('PUT')
+                @endif
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                        <label for="title" class="mb-1 block text-sm font-semibold text-on-surface">Service title</label>
+                        <input id="title" name="title" required maxlength="255" value="{{ old('title', $editingService?->title) }}" class="w-full rounded-lg border border-outline-variant bg-white px-3 py-2.5">
+                    </div>
+                    <div>
+                        <label for="category" class="mb-1 block text-sm font-semibold text-on-surface">Category</label>
+                        <select id="category" name="category" required class="w-full rounded-lg border border-outline-variant bg-white px-3 py-2.5">
+                            <option value="">Select a category</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->name }}" @selected(old('category', $editingService?->category) === $category->name)>{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="authority" class="mb-1 block text-sm font-semibold text-on-surface">Relevant authority or service area</label>
+                        <input id="authority" name="authority" required maxlength="255" value="{{ old('authority', $editingService?->authority) }}" class="w-full rounded-lg border border-outline-variant bg-white px-3 py-2.5">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="summary" class="mb-1 block text-sm font-semibold text-on-surface">Summary</label>
+                        <textarea id="summary" name="summary" required maxlength="5000" rows="3" class="w-full rounded-lg border border-outline-variant bg-white px-3 py-2.5">{{ old('summary', $editingService?->summary) }}</textarea>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="requirements" class="mb-1 block text-sm font-semibold text-on-surface">Requirements</label>
+                        <textarea id="requirements" name="requirements" required maxlength="5000" rows="3" class="w-full rounded-lg border border-outline-variant bg-white px-3 py-2.5">{{ old('requirements', $editingService?->requirements) }}</textarea>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <!-- Category Filter Pill Tabs -->
-        <div class="flex items-center gap-2 pt-4 pb-6 overflow-x-auto no-scrollbar">
-            <button class="px-4 py-2 rounded-lg font-label-md text-label-md bg-primary-container text-on-primary whitespace-nowrap shadow-sm font-semibold flex items-center gap-2">
-                <span>All Services</span>
-                <span class="px-1.5 py-0.5 rounded-full text-[11px] bg-on-primary/15 text-on-primary font-bold">30</span>
-            </button>
-            <button class="px-4 py-2 rounded-lg font-label-md text-label-md bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-primary whitespace-nowrap transition-colors font-medium flex items-center gap-2">
-                <span>Overseas Registration</span>
-                <span class="px-1.5 py-0.5 rounded-full text-[11px] bg-surface-container-highest text-primary font-semibold">11</span>
-            </button>
-            <button class="px-4 py-2 rounded-lg font-label-md text-label-md bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-primary whitespace-nowrap transition-colors font-medium flex items-center gap-2">
-                <span>Documentation</span>
-                <span class="px-1.5 py-0.5 rounded-full text-[11px] bg-surface-container-highest text-primary font-semibold">6</span>
-            </button>
-            <button class="px-4 py-2 rounded-lg font-label-md text-label-md bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-primary whitespace-nowrap transition-colors font-medium flex items-center gap-2">
-                <span>Education</span>
-                <span class="px-1.5 py-0.5 rounded-full text-[11px] bg-surface-container-highest text-primary font-semibold">4</span>
-            </button>
-            <button class="px-4 py-2 rounded-lg font-label-md text-label-md bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-primary whitespace-nowrap transition-colors font-medium flex items-center gap-2">
-                <span>Career Support</span>
-                <span class="px-1.5 py-0.5 rounded-full text-[11px] bg-surface-container-highest text-primary font-semibold">4</span>
-            </button>
-            <button class="px-4 py-2 rounded-lg font-label-md text-label-md bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-primary whitespace-nowrap transition-colors font-medium flex items-center gap-2">
-                <span>Exam & Language</span>
-                <span class="px-1.5 py-0.5 rounded-full text-[11px] bg-surface-container-highest text-primary font-semibold">5</span>
-            </button>
-        </div>
-        <!-- Structured Service Table Inventory -->
-        <div class="overflow-x-auto rounded-lg bg-surface-container-lowest">
-            <table class="w-full text-left">
-                <thead>
-                    <tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
-                        <th class="py-3.5 px-4 font-semibold">Service Dossier & Scope</th>
-                        <th class="py-3.5 px-4 font-semibold">Operational Category</th>
-                        <th class="py-3.5 px-4 font-semibold">Bureau Status</th>
-                        <th class="py-3.5 px-4 font-semibold">Last Certified</th>
-                        <th class="py-3.5 px-4 font-semibold text-right">Desk Actions</th>
+                <label class="flex items-start gap-3 rounded-lg bg-surface-container-low p-4">
+                    <input type="checkbox" name="is_published" value="1" @checked(old('is_published', $editingService?->is_published ?? true)) class="mt-1 rounded border-outline-variant">
+                    <span>
+                        <span class="block font-semibold text-primary">Publish on the website</span>
+                        <span class="block text-sm text-on-surface-variant">Unpublished services are hidden from the public catalogue, detail pages, and enquiry form.</span>
+                    </span>
+                </label>
+                <button type="submit" class="rounded-lg bg-primary px-5 py-3 font-semibold text-on-primary hover:bg-primary-container">
+                    {{ $editingService ? 'Save changes' : 'Create service' }}
+                </button>
+            </form>
+        </section>
+    @endif
+
+    <section class="rounded-xl bg-surface-container-lowest p-5 shadow-sm">
+        <form method="GET" action="{{ route('admin.services') }}" class="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(12rem,1fr)_minmax(10rem,14rem)_minmax(8rem,10rem)_minmax(8rem,9rem)_auto]">
+            <label class="sr-only" for="service-search">Search services</label>
+            <input id="service-search" type="search" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Search title, category, authority" class="h-11 min-w-0 rounded-lg bg-surface-container-low px-4">
+            <label class="sr-only" for="service-category-filter">Filter category</label>
+            <select id="service-category-filter" name="category" class="h-11 min-w-0 rounded-lg bg-surface-container-low px-3">
+                <option value="">All categories</option>
+                @foreach ($categories as $category)
+                    <option value="{{ $category->name }}" @selected(($filters['category'] ?? '') === $category->name)>{{ $category->name }}</option>
+                @endforeach
+            </select>
+            <label class="sr-only" for="service-status-filter">Filter publication status</label>
+            <select id="service-status-filter" name="status" class="h-11 min-w-0 rounded-lg bg-surface-container-low px-3">
+                <option value="">All statuses</option>
+                <option value="published" @selected(($filters['status'] ?? '') === 'published')>Published</option>
+                <option value="draft" @selected(($filters['status'] ?? '') === 'draft')>Draft</option>
+            </select>
+            <label class="sr-only" for="service-per-page">Rows per page</label>
+            <select id="service-per-page" name="per_page" class="h-11 min-w-0 rounded-lg bg-surface-container-low px-3">
+                @foreach ([10, 20, 50, 100] as $pageSize)
+                    <option value="{{ $pageSize }}" @selected($perPage === $pageSize)>{{ $pageSize }} per page</option>
+                @endforeach
+            </select>
+            <button type="submit" class="h-11 rounded-lg bg-primary px-5 font-semibold text-on-primary">Filter</button>
+        </form>
+    </section>
+
+    <section class="overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm" aria-label="Service catalogue">
+        <div class="overflow-x-auto">
+            <table class="w-full min-w-[800px] text-left text-sm">
+                <thead class="bg-surface-container-low text-xs uppercase tracking-wider text-on-surface-variant">
+                    <tr>
+                        <th class="px-4 py-3 font-semibold">Service</th>
+                        <th class="px-4 py-3 font-semibold">Category</th>
+                        <th class="px-4 py-3 font-semibold">Authority</th>
+                        <th class="px-4 py-3 font-semibold">Status</th>
+                        <th class="px-4 py-3 font-semibold">Public page</th>
+                        <th class="px-4 py-3 font-semibold">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-surface-container font-body-sm text-body-sm">
-                    <!-- Item 1 (Currently Inspected / Active) -->
-                    <tr class="bg-surface-container-high/40 hover:bg-surface-container-high/70 transition-colors">
-                        <td class="py-4 px-4">
-                            <div class="flex items-start gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
-                                    <span class="material-symbols-outlined text-[18px]">verified</span>
+                <tbody class="divide-y divide-surface-container">
+                    @forelse ($services as $service)
+                        <tr class="align-top hover:bg-surface-container-low">
+                            <td class="px-4 py-4">
+                                <p class="font-semibold text-primary">{{ $service->title }}</p>
+                                <p class="mt-1 text-xs text-on-surface-variant">{{ $service->summary }}</p>
+                            </td>
+                            <td class="px-4 py-4">{{ $service->category }}</td>
+                            <td class="px-4 py-4">{{ $service->authority }}</td>
+                            <td class="px-4 py-4">
+                                <span class="rounded-full px-2.5 py-1 text-xs font-semibold {{ $service->is_published ? 'bg-green-100 text-green-900' : 'bg-slate-100 text-slate-700' }}">
+                                    {{ $service->is_published ? 'Published' : 'Draft' }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-4">
+                                @if ($service->is_published)
+                                    <a href="{{ route('service.detail', $service->slug) }}" target="_blank" rel="noopener" class="text-primary underline underline-offset-2">Preview</a>
+                                @else
+                                    <span class="text-on-surface-variant">Hidden</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-4">
+                                <div class="flex flex-wrap gap-3">
+                                    <a href="{{ route('admin.services', [...request()->query(), 'edit' => $service->id]) }}#service-form" class="font-semibold text-primary underline underline-offset-2">Edit</a>
+                                    <form method="POST" action="{{ route('admin.services.destroy', $service) }}" onsubmit="return confirm('Delete this service? It will also be removed from the public catalogue.')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="font-semibold text-red-700 underline underline-offset-2">Delete</button>
+                                    </form>
                                 </div>
-                                <div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="font-headline-sm text-headline-sm text-primary font-semibold">NMBI Decision Letter (DL) Process</span>
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-label-sm bg-secondary-fixed text-on-secondary-fixed font-bold tracking-wide">ACTIVE DOSSIER</span>
-                                    </div>
-                                    <p class="text-on-surface-variant font-body-sm text-body-sm mt-0.5 max-w-md line-clamp-1">Guidance for Irish Nursing and Midwifery Board DL verification and registration docket compilation.</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-primary font-medium">
-                                <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                                Overseas Registration
-                            </span>
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap">
-                            <span class="inline-flex items-center gap-1.5 text-label-sm font-label-sm text-primary font-semibold bg-surface-container-lowest px-2.5 py-1 rounded shadow-sm">
-                                <span class="material-symbols-outlined text-[14px] text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                                Published
-                            </span>
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap text-on-surface-variant font-label-md text-label-md">
-                            Oct 28, 2025
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap text-right">
-                            <div class="flex items-center justify-end gap-1.5">
-                                <button class="px-2.5 py-1.5 rounded-lg bg-primary text-on-primary font-label-sm text-label-sm font-semibold hover:bg-primary-container shadow-sm transition-all flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-[15px]">edit</span>
-                                    Edit
-                                </button>
-                                <button class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Preview Public URL">
-                                    <span class="material-symbols-outlined text-[18px]">visibility</span>
-                                </button>
-                                <button class="p-1.5 rounded-lg text-outline hover:text-error hover:bg-error-container/20 transition-colors" title="Withdraw from Public">
-                                    <span class="material-symbols-outlined text-[18px]">unpublished</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- Item 2 -->
-                    <tr class="hover:bg-surface-container-low transition-colors">
-                        <td class="py-4 px-4">
-                            <div class="flex items-start gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-surface-container text-primary flex items-center justify-center shrink-0 mt-0.5">
-                                    <span class="material-symbols-outlined text-[18px]">policy</span>
-                                </div>
-                                <div>
-                                    <div class="font-title-md text-title-md text-on-surface font-semibold">DataFlow Verification</div>
-                                    <p class="text-on-surface-variant font-body-sm text-body-sm mt-0.5 max-w-md line-clamp-1">Primary Source Verification (PSV) document compilation for GCC healthcare authorities (DHA, MOH, DOH, SCFHS).</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-primary font-medium">
-                                <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                                Overseas Registration
-                            </span>
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap">
-                            <span class="inline-flex items-center gap-1.5 text-label-sm font-label-sm text-primary font-semibold bg-surface-container-lowest px-2.5 py-1 rounded shadow-sm">
-                                <span class="material-symbols-outlined text-[14px] text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                                Published
-                            </span>
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap text-on-surface-variant font-label-md text-label-md">
-                            Oct 25, 2025
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap text-right">
-                            <div class="flex items-center justify-end gap-1.5">
-                                <button class="px-2.5 py-1.5 rounded-lg text-primary hover:bg-surface-container-high font-label-sm text-label-sm font-semibold transition-colors flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-[15px]">edit</span>
-                                    Edit
-                                </button>
-                                <button class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Preview Public URL">
-                                    <span class="material-symbols-outlined text-[18px]">visibility</span>
-                                </button>
-                                <button class="p-1.5 rounded-lg text-outline hover:text-error hover:bg-error-container/20 transition-colors" title="Withdraw from Public">
-                                    <span class="material-symbols-outlined text-[18px]">unpublished</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- Item 3 -->
-                    <tr class="hover:bg-surface-container-low transition-colors">
-                        <td class="py-4 px-4">
-                            <div class="flex items-start gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-surface-container text-primary flex items-center justify-center shrink-0 mt-0.5">
-                                    <span class="material-symbols-outlined text-[18px]">badge</span>
-                                </div>
-                                <div>
-                                    <div class="font-title-md text-title-md text-on-surface font-semibold">Passport New Application & Renewal</div>
-                                    <p class="text-on-surface-variant font-body-sm text-body-sm mt-0.5 max-w-md line-clamp-1">Tatkaal, normal, minor, and renewal slot scheduling and document checklist validation.</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-primary font-medium">
-                                <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                                Documentation
-                            </span>
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap">
-                            <span class="inline-flex items-center gap-1.5 text-label-sm font-label-sm text-primary font-semibold bg-surface-container-lowest px-2.5 py-1 rounded shadow-sm">
-                                <span class="material-symbols-outlined text-[14px] text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                                Published
-                            </span>
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap text-on-surface-variant font-label-md text-label-md">
-                            Oct 20, 2025
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap text-right">
-                            <div class="flex items-center justify-end gap-1.5">
-                                <button class="px-2.5 py-1.5 rounded-lg text-primary hover:bg-surface-container-high font-label-sm text-label-sm font-semibold transition-colors flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-[15px]">edit</span>
-                                    Edit
-                                </button>
-                                <button class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Preview Public URL">
-                                    <span class="material-symbols-outlined text-[18px]">visibility</span>
-                                </button>
-                                <button class="p-1.5 rounded-lg text-outline hover:text-error hover:bg-error-container/20 transition-colors" title="Withdraw from Public">
-                                    <span class="material-symbols-outlined text-[18px]">unpublished</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- Item 4 -->
-                    <tr class="hover:bg-surface-container-low transition-colors">
-                        <td class="py-4 px-4">
-                            <div class="flex items-start gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-surface-container text-primary flex items-center justify-center shrink-0 mt-0.5">
-                                    <span class="material-symbols-outlined text-[18px]">school</span>
-                                </div>
-                                <div>
-                                    <div class="font-title-md text-title-md text-on-surface font-semibold">University Application Support</div>
-                                    <p class="text-on-surface-variant font-body-sm text-body-sm mt-0.5 max-w-md line-clamp-1">Comprehensive guidance on international higher education applications and docket compilation.</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-primary font-medium">
-                                <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                                Education & University
-                            </span>
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap">
-                            <span class="inline-flex items-center gap-1.5 text-label-sm font-label-sm text-primary font-semibold bg-surface-container-lowest px-2.5 py-1 rounded shadow-sm">
-                                <span class="material-symbols-outlined text-[14px] text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                                Published
-                            </span>
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap text-on-surface-variant font-label-md text-label-md">
-                            Oct 15, 2025
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap text-right">
-                            <div class="flex items-center justify-end gap-1.5">
-                                <button class="px-2.5 py-1.5 rounded-lg text-primary hover:bg-surface-container-high font-label-sm text-label-sm font-semibold transition-colors flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-[15px]">edit</span>
-                                    Edit
-                                </button>
-                                <button class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Preview Public URL">
-                                    <span class="material-symbols-outlined text-[18px]">visibility</span>
-                                </button>
-                                <button class="p-1.5 rounded-lg text-outline hover:text-error hover:bg-error-container/20 transition-colors" title="Withdraw from Public">
-                                    <span class="material-symbols-outlined text-[18px]">unpublished</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- Item 5 -->
-                    <tr class="hover:bg-surface-container-low transition-colors">
-                        <td class="py-4 px-4">
-                            <div class="flex items-start gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-surface-container text-primary flex items-center justify-center shrink-0 mt-0.5">
-                                    <span class="material-symbols-outlined text-[18px]">description</span>
-                                </div>
-                                <div>
-                                    <div class="font-title-md text-title-md text-on-surface font-semibold">ATS-Friendly CV / Resume</div>
-                                    <p class="text-on-surface-variant font-body-sm text-body-sm mt-0.5 max-w-md line-clamp-1">Tailored international CV optimization for international employer standards and overseas health trusts.</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-primary font-medium">
-                                <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                                Career Support
-                            </span>
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap">
-                            <span class="inline-flex items-center gap-1.5 text-label-sm font-label-sm text-primary font-semibold bg-surface-container-lowest px-2.5 py-1 rounded shadow-sm">
-                                <span class="material-symbols-outlined text-[14px] text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                                Published
-                            </span>
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap text-on-surface-variant font-label-md text-label-md">
-                            Oct 12, 2025
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap text-right">
-                            <div class="flex items-center justify-end gap-1.5">
-                                <button class="px-2.5 py-1.5 rounded-lg text-primary hover:bg-surface-container-high font-label-sm text-label-sm font-semibold transition-colors flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-[15px]">edit</span>
-                                    Edit
-                                </button>
-                                <button class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Preview Public URL">
-                                    <span class="material-symbols-outlined text-[18px]">visibility</span>
-                                </button>
-                                <button class="p-1.5 rounded-lg text-outline hover:text-error hover:bg-error-container/20 transition-colors" title="Withdraw from Public">
-                                    <span class="material-symbols-outlined text-[18px]">unpublished</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- Item 6 -->
-                    <tr class="hover:bg-surface-container-low transition-colors">
-                        <td class="py-4 px-4">
-                            <div class="flex items-start gap-3">
-                                <div class="w-8 h-8 rounded-lg bg-surface-container text-primary flex items-center justify-center shrink-0 mt-0.5">
-                                    <span class="material-symbols-outlined text-[18px]">translate</span>
-                                </div>
-                                <div>
-                                    <div class="font-title-md text-title-md text-on-surface font-semibold">OET Exam Booking</div>
-                                    <p class="text-on-surface-variant font-body-sm text-body-sm mt-0.5 max-w-md line-clamp-1">Occupational English Test booking, venue selection, and candidate profile management.</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-primary font-medium">
-                                <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                                Exam & Language
-                            </span>
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap">
-                            <span class="inline-flex items-center gap-1.5 text-label-sm font-label-sm text-primary font-semibold bg-surface-container-lowest px-2.5 py-1 rounded shadow-sm">
-                                <span class="material-symbols-outlined text-[14px] text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                                Published
-                            </span>
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap text-on-surface-variant font-label-md text-label-md">
-                            Oct 10, 2025
-                        </td>
-                        <td class="py-4 px-4 whitespace-nowrap text-right">
-                            <div class="flex items-center justify-end gap-1.5">
-                                <button class="px-2.5 py-1.5 rounded-lg text-primary hover:bg-surface-container-high font-label-sm text-label-sm font-semibold transition-colors flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-[15px]">edit</span>
-                                    Edit
-                                </button>
-                                <button class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Preview Public URL">
-                                    <span class="material-symbols-outlined text-[18px]">visibility</span>
-                                </button>
-                                <button class="p-1.5 rounded-lg text-outline hover:text-error hover:bg-error-container/20 transition-colors" title="Withdraw from Public">
-                                    <span class="material-symbols-outlined text-[18px]">unpublished</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="6" class="px-6 py-12 text-center text-on-surface-variant">No services found. Add a service or change the filters.</td></tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
-        <!-- Inventory Sub-Footer Metadata -->
-        <div class="mt-4 pt-4 border-t border-surface-container flex flex-col sm:flex-row items-center justify-between gap-3 text-outline">
-            <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-[16px]">info</span>
-                <span class="font-body-sm text-body-sm">Displaying 6 of 30 services. Use search to filter full directory.</span>
-            </div>
-            <div class="flex items-center gap-1">
-                <button class="px-2.5 py-1 rounded text-outline-variant hover:text-primary transition-colors disabled:opacity-40" disabled="">
-                    <span class="material-symbols-outlined text-[18px]">chevron_left</span>
-                </button>
-                <span class="font-label-sm text-label-sm text-on-surface font-semibold px-2">Page 1 of 5</span>
-                <button class="px-2.5 py-1 rounded text-outline hover:text-primary transition-colors">
-                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
-                </button>
-            </div>
-        </div>
-    </section>
-    <!-- SECTION 2: Comprehensive "Service Edit / Create Form" Panel -->
-    <section class="bg-surface-container-lowest rounded-xl shadow-md overflow-hidden relative">
-        <!-- Top Accent Bar for Dossier Prestige -->
-        <div class="h-1.5 w-full bg-secondary"></div>
-        <div class="p-8">
-            <!-- Edit Dossier Master Header -->
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-surface-container">
-                <div class="flex items-start gap-4">
-                    <div class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-on-primary shadow-sm shrink-0">
-                        <span class="material-symbols-outlined text-[24px]">fact_check</span>
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2.5 flex-wrap">
-                            <span class="font-label-sm text-label-sm font-semibold uppercase tracking-wider text-secondary">Bureau Editor Active</span>
-                            <span class="text-outline-variant">•</span>
-                            <span class="font-label-sm text-label-sm text-outline">Dossier Key: SRV-IE-NMBI-001</span>
-                            <span class="px-2 py-0.5 rounded text-[11px] font-label-sm bg-surface-container text-primary font-semibold">Production Ready</span>
-                        </div>
-                        <h2 class="font-headline-lg text-headline-lg text-primary tracking-tight mt-0.5">Editing: NMBI Decision Letter (DL) Process</h2>
-                        <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Configure regulatory guidelines, candidate verification scopes, document requirements, and external registry disclaimers.</p>
-                    </div>
-                </div>
-                <!-- Form Top Action Micro-Controls -->
-                <div class="flex items-center gap-3">
-                    <button class="px-4 py-2 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-primary hover:bg-surface-container font-label-md text-label-md font-medium transition-colors flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[18px]">open_in_new</span>
-                        <span>Preview Public Page</span>
-                    </button>
-                    <button class="px-5 py-2 rounded-lg bg-primary text-on-primary hover:bg-primary-container font-label-md text-label-md font-semibold transition-all shadow-sm flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[18px]">save</span>
-                        <span>Save Changes</span>
-                    </button>
-                </div>
-            </div>
-            <!-- Navigation Tabs -->
-            <div class="flex items-center gap-2 border-b border-surface-container mt-6 overflow-x-auto no-scrollbar">
-                <button class="pb-3 px-4 font-title-md text-title-md font-semibold text-primary border-b-2 border-secondary flex items-center gap-2 shrink-0">
-                    <span class="material-symbols-outlined text-[18px] text-secondary">feed</span>
-                    <span>Basic Details</span>
-                </button>
-                <button class="pb-3 px-4 font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2 shrink-0">
-                    <span class="material-symbols-outlined text-[18px]">account_tree</span>
-                    <span>Procedural Steps</span>
-                </button>
-                <button class="pb-3 px-4 font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2 shrink-0">
-                    <span class="material-symbols-outlined text-[18px]">attach_file</span>
-                    <span>Required Documents</span>
-                </button>
-                <button class="pb-3 px-4 font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2 shrink-0">
-                    <span class="material-symbols-outlined text-[18px]">help_outline</span>
-                    <span>FAQs & Official Links</span>
-                </button>
-                <button class="pb-3 px-4 font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2 shrink-0">
-                    <span class="material-symbols-outlined text-[18px]">travel_explore</span>
-                    <span>SEO & URL Settings</span>
-                </button>
-            </div>
-            <!-- Form Body Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-8">
-                <!-- Main Form Column (8 cols) -->
-                <div class="lg:col-span-8 space-y-6">
-                    <!-- Row 1: Title & URL Slug -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="space-y-1.5">
-                            <label class="font-label-md text-label-md text-on-surface font-semibold flex items-center justify-between">
-                                <span>Service Title</span>
-                                <span class="text-error font-body-sm">*</span>
-                            </label>
-                            <input class="w-full h-11 px-3.5 rounded-lg bg-surface-container-lowest font-body-md text-body-md text-on-surface ring-1 ring-outline-variant focus:ring-2 focus:ring-primary-container outline-none transition-shadow" type="text" value="NMBI Decision Letter (DL) Process" />
-                            <span class="font-body-sm text-body-sm text-outline">Public header string displayed on candidate search & brochures.</span>
-                        </div>
-                        <div class="space-y-1.5">
-                            <label class="font-label-md text-label-md text-on-surface font-semibold">Operational Category</label>
-                            <div class="relative">
-                                <select class="w-full h-11 px-3.5 pr-10 rounded-lg bg-surface-container-lowest font-body-md text-body-md text-on-surface ring-1 ring-outline-variant focus:ring-2 focus:ring-primary-container outline-none transition-shadow appearance-none">
-                                    <option selected="">Overseas Registration & Licensing (11 Services)</option>
-                                    <option>Documentation & Attestation (6 Services)</option>
-                                    <option>Education & University (4 Services)</option>
-                                    <option>Career Support (4 Services)</option>
-                                    <option>Exam & Language (5 Services)</option>
-                                </select>
-                                <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[20px]">expand_more</span>
-                            </div>
-                            <span class="font-body-sm text-body-sm text-outline">Dictates taxonomy navigation and advisor allocation rules.</span>
-                        </div>
-                    </div>
-                    <!-- Canonical URL Slug -->
-                    <div class="space-y-1.5">
-                        <label class="font-label-md text-label-md text-on-surface font-semibold">Canonical Public URL Slug</label>
-                        <div class="flex items-center rounded-lg ring-1 ring-outline-variant focus-within:ring-2 focus-within:ring-primary-container overflow-hidden">
-                            <span class="bg-surface-container-low px-3.5 py-2.5 text-on-surface-variant font-label-md text-label-md border-r border-surface-container shrink-0">oxfordprocessing.com</span>
-                            <input class="w-full h-11 px-3.5 font-body-md text-body-md text-on-surface outline-none bg-surface-container-lowest" type="text" value="/services/overseas-registration/nmbi-decision-letter" />
-                        </div>
-                    </div>
-                    <!-- Short Summary -->
-                    <div class="space-y-1.5">
-                        <label class="font-label-md text-label-md text-on-surface font-semibold">Short Summary / Teaser</label>
-                        <textarea class="w-full p-3.5 rounded-lg bg-surface-container-lowest font-body-md text-body-md text-on-surface ring-1 ring-outline-variant focus:ring-2 focus:ring-primary-container outline-none transition-shadow resize-none" rows="2">Comprehensive advisory, dossier verification, and procedural guidance for qualified nurses applying for the NMBI Decision Letter.</textarea>
-                        <span class="font-body-sm text-body-sm text-outline">Used across meta descriptions and service card previews (128 of 160 characters recommended).</span>
-                    </div>
-                    <!-- Candidate Target & Assistance Scope (Side-by-side) -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="space-y-1.5">
-                            <label class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1.5">
-                                <span class="material-symbols-outlined text-[16px] text-secondary">person_search</span>
-                                <span>Who The Service Is For (Target Candidates)</span>
-                            </label>
-                            <textarea class="w-full p-3.5 rounded-lg bg-surface-container-lowest font-body-sm text-body-sm text-on-surface ring-1 ring-outline-variant focus:ring-2 focus:ring-primary-container outline-none transition-shadow" rows="4">Staff nurses and midwives registered with state nursing councils across India seeking credential evaluation and authorization to practice in the Republic of Ireland.</textarea>
-                        </div>
-                        <div class="space-y-1.5">
-                            <label class="font-label-md text-label-md text-on-surface font-semibold flex items-center gap-1.5">
-                                <span class="material-symbols-outlined text-[16px] text-secondary">verified_user</span>
-                                <span>Oxford Processing Scope of Assistance</span>
-                            </label>
-                            <textarea class="w-full p-3.5 rounded-lg bg-surface-container-lowest font-body-sm text-body-sm text-on-surface ring-1 ring-outline-variant focus:ring-2 focus:ring-primary-container outline-none transition-shadow" rows="4">Verification checklist review, CCPS synchronization, NMBI portal tracking, credential packaging, and certified translation advisory.</textarea>
-                        </div>
-                    </div>
-                    <!-- Process Overview (4 Steps) Module -->
-                    <div class="space-y-3 pt-2">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <label class="font-label-md text-label-md text-on-surface font-semibold">Structured Procedural Flow (4 Standard Steps)</label>
-                                <p class="font-body-sm text-body-sm text-outline">Step-by-step guidance provided to candidates in portal timeline tracking.</p>
-                            </div>
-                            <button class="font-label-sm text-label-sm text-primary hover:text-secondary font-semibold transition-colors flex items-center gap-1">
-                                <span class="material-symbols-outlined text-[16px]">add_circle</span>
-                                Add Milestone
-                            </button>
-                        </div>
-                        <div class="space-y-2.5">
-                            <!-- Step 1 -->
-                            <div class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low">
-                                <span class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-sm text-label-sm font-bold shrink-0">1</span>
-                                <div class="flex-1">
-                                    <span class="font-label-md text-label-md text-primary font-semibold">Initial Dossier & Credential Audit</span>
-                                    <span class="font-body-sm text-body-sm text-on-surface-variant block">Verification of nursing council credentials, transcript integrity, and identity records.</span>
-                                </div>
-                                <span class="material-symbols-outlined text-outline text-[18px] cursor-grab">drag_indicator</span>
-                            </div>
-                            <!-- Step 2 -->
-                            <div class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low">
-                                <span class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-sm text-label-sm font-bold shrink-0">2</span>
-                                <div class="flex-1">
-                                    <span class="font-label-md text-label-md text-primary font-semibold">Verification Request to State Council (CCPS)</span>
-                                    <span class="font-body-sm text-body-sm text-on-surface-variant block">Direct council-to-council verification packaging and tracking dispatch.</span>
-                                </div>
-                                <span class="material-symbols-outlined text-outline text-[18px] cursor-grab">drag_indicator</span>
-                            </div>
-                            <!-- Step 3 -->
-                            <div class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low">
-                                <span class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-sm text-label-sm font-bold shrink-0">3</span>
-                                <div class="flex-1">
-                                    <span class="font-label-md text-label-md text-primary font-semibold">Submission of Certified Docs & Translation</span>
-                                    <span class="font-body-sm text-body-sm text-on-surface-variant block">Uploading certified dossiers to overseas licensing registry in prescribed layout.</span>
-                                </div>
-                                <span class="material-symbols-outlined text-outline text-[18px] cursor-grab">drag_indicator</span>
-                            </div>
-                            <!-- Step 4 -->
-                            <div class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-low">
-                                <span class="w-7 h-7 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-sm text-label-sm font-bold shrink-0">4</span>
-                                <div class="flex-1">
-                                    <span class="font-label-md text-label-md text-primary font-semibold">Tracking & Milestone Review</span>
-                                    <span class="font-body-sm text-body-sm text-on-surface-variant block">Active status tracking until official NMBI Decision Letter issuance.</span>
-                                </div>
-                                <span class="material-symbols-outlined text-outline text-[18px] cursor-grab">drag_indicator</span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Indicative Document Checklist -->
-                    <div class="space-y-1.5 pt-2">
-                        <div class="flex items-center justify-between">
-                            <label class="font-label-md text-label-md text-on-surface font-semibold">Indicative Document Checklist</label>
-                            <span class="font-label-sm text-label-sm text-secondary font-semibold bg-secondary-fixed/50 px-2 py-0.5 rounded">Subject to Verification</span>
-                        </div>
-                        <textarea class="w-full p-3.5 rounded-lg bg-surface-container-lowest font-body-sm text-body-sm text-on-surface ring-1 ring-outline-variant focus:ring-2 focus:ring-primary-container outline-none transition-shadow font-mono" rows="3">Valid International Passport (Min. 18 Months Validity), State Nursing Council Registration Certificate, Nursing Degree / GNM Diploma Certificates, Year-wise Academic Marksheets, Approved English Test Report (OET Grade B or IELTS 7.0+), Police Clearance Certificate (PCC).</textarea>
-                    </div>
-                </div>
-                <!-- Right Side Configuration Column (4 cols) -->
-                <div class="lg:col-span-4 space-y-6">
-                    <!-- Publication Status Card -->
-                    <div class="p-5 rounded-xl bg-surface-container-low space-y-4 shadow-sm">
-                        <div class="flex items-center justify-between">
-                            <span class="font-label-md text-label-md text-primary font-semibold">Publication Status</span>
-                            <span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
-                        </div>
-                        <div class="space-y-3">
-                            <label class="flex items-start gap-3 p-3 rounded-lg bg-surface-container-lowest cursor-pointer shadow-sm">
-                                <input checked="" class="mt-1 w-4 h-4 text-primary accent-primary" name="service_status" type="radio" />
-                                <div class="flex flex-col">
-                                    <span class="font-label-md text-label-md text-primary font-semibold">Published (Live on Website)</span>
-                                    <span class="font-body-sm text-body-sm text-on-surface-variant">Candidates can find and submit intake forms for this service.</span>
-                                </div>
-                            </label>
-                            <label class="flex items-start gap-3 p-3 rounded-lg bg-surface-container-lowest cursor-pointer shadow-sm">
-                                <input class="mt-1 w-4 h-4 text-primary accent-primary" name="service_status" type="radio" />
-                                <div class="flex flex-col">
-                                    <span class="font-label-md text-label-md text-on-surface font-semibold">Save as Draft / Internal</span>
-                                    <span class="font-body-sm text-body-sm text-on-surface-variant">Hidden from public directory. Visible only to Bureau Officers.</span>
-                                </div>
-                            </label>
-                        </div>
-                        <div class="pt-2 text-[12px] text-outline flex items-center justify-between">
-                            <span>Last sync: 2 mins ago</span>
-                            <span>Auditor: Kottayam #01</span>
-                        </div>
-                    </div>
-                    <!-- Bureau Regulatory Disclaimer Box -->
-                    <div class="p-5 rounded-xl bg-surface-container-low space-y-3">
-                        <div class="flex items-center gap-2 text-secondary font-label-md text-label-md font-semibold">
-                            <span class="material-symbols-outlined text-[18px]">verified_user</span>
-                            <span>Mandatory Institutional Disclaimer</span>
-                        </div>
-                        <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
-                            "Oxford Processing functions as an independent document preparation and compliance facilitator. Final licensing, validation, and issuance decisions rest exclusively with the external licensing body (NMBI Ireland)."
-                        </p>
-                        <div class="flex items-center gap-2 pt-1 text-[12px] text-primary font-medium">
-                            <span class="material-symbols-outlined text-[15px] text-secondary">check_circle</span>
-                            <span>Appended automatically to candidate contracts</span>
-                        </div>
-                    </div>
-                    <!-- Station Metadata & Audit Trail -->
-                    <div class="p-5 rounded-xl bg-surface-container-low space-y-3 text-on-surface-variant">
-                        <span class="font-label-sm text-label-sm uppercase tracking-wider text-outline block">Audit Log & Version Control</span>
-                        <div class="space-y-2 font-body-sm text-body-sm">
-                            <div class="flex justify-between">
-                                <span>Created by:</span>
-                                <span class="font-medium text-on-surface">Kerala Desk Supervisor</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Version:</span>
-                                <span class="font-mono text-primary font-semibold">v3.8 (Revision 14)</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Direct Lead Destination:</span>
-                                <span class="font-medium text-on-surface">IE-Desk@oxford.com</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Form Sticky / Bottom Action Bar -->
-            <div class="mt-8 pt-6 border-t border-surface-container flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div class="flex items-center gap-2 text-outline font-body-sm text-body-sm">
-                    <span class="material-symbols-outlined text-[18px]">shield</span>
-                    <span>All changes logged under Admin ID #01 with immutable revision stamp.</span>
-                </div>
-                <div class="flex items-center gap-3 w-full sm:w-auto">
-                    <button class="flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container font-label-md text-label-md font-medium transition-colors">
-                        Cancel / Discard
-                    </button>
-                    <button class="flex-1 sm:flex-none px-5 py-2.5 rounded-lg bg-surface-container-high text-primary hover:bg-surface-container font-label-md text-label-md font-semibold transition-colors">
-                        Preview Public Page
-                    </button>
-                    <button class="flex-1 sm:flex-none px-6 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-sm transition-all flex items-center justify-center gap-2">
-                        <span class="material-symbols-outlined text-[18px]">done_all</span>
-                        <span>Save Changes</span>
-                    </button>
-                </div>
-            </div>
-        </div>
+        <footer class="flex flex-col gap-3 border-t border-surface-container p-4 sm:flex-row sm:items-center sm:justify-between">
+            <p class="text-sm text-on-surface-variant">
+                @if ($services->total())
+                    Showing {{ $services->firstItem() }}–{{ $services->lastItem() }} of {{ $services->total() }} services
+                @else
+                    Showing 0 services
+                @endif
+            </p>
+            <div>{{ $services->links() }}</div>
+        </footer>
     </section>
 </div>
-
 @endsection

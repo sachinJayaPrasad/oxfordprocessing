@@ -12,6 +12,14 @@ use Illuminate\View\View;
 
 class AdminEnquiriesController extends Controller
 {
+    public function show(Enquiry $enquiry): View
+    {
+        return view('admin.enquiry-detail', [
+            'enquiry' => $enquiry,
+            'statuses' => Enquiry::STATUSES,
+        ]);
+    }
+
     public function index(Request $request): View
     {
         $filters = $request->validate([
@@ -92,7 +100,10 @@ class AdminEnquiriesController extends Controller
 
         Mail::to($enquiry->email, $enquiry->name)->send(new EnquiryStatusMail($subject, $message));
 
-        return redirect()->route('admin.enquiries', $request->only(['search', 'status', 'per_page']))
-            ->with('email_sent', $type);
+        $returnRoute = $request->routeIs('admin.enquiries.email')
+            ? route('admin.enquiries.show', $enquiry)
+            : route('admin.enquiries', $request->only(['search', 'status', 'per_page']));
+
+        return redirect($returnRoute)->with('email_sent', $type);
     }
 }
